@@ -40,12 +40,14 @@ html {
 .container-fluid {
   width: 100%;
   padding-right: 15px;
+  margin-block-end: -8px;
   padding-left: 15px;
   margin-right: auto;
   margin-left: auto; }
 
 .row {
   display: -webkit-box;
+  margin-block-end: -8px;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-wrap: wrap;
