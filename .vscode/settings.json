@@ -2,5 +2,14 @@
     "cSpell.words": [
         "cbmm",
         "characterisation"
+    ],
+    "spellright.language": [
+        "en"
+    ],
+    "spellright.documentTypes": [
+        "markdown",
+        "latex",
+        "plaintext",
+        "html"
     ]
 }
