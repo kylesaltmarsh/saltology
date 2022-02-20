@@ -511,3 +511,8 @@ p {
   padding-top: 0.6em;
   -webkit-font-smoothing: antialiased;
 }
+
+a, span.link {
+  /* color: MediumSlateBlue    ; */
+  background-color: white;
+}
