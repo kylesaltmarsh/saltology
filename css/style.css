@@ -516,3 +516,19 @@ a, span.link {
   /* color: MediumSlateBlue    ; */
   background-color: white;
 }
+
+.Progress {
+  background-color: var(--color-neutral-muted);
+  border-radius: 6px;
+  display: flex;
+  height: 8px;
+  outline: 1px solid #0000;
+  overflow: hidden;
+}
+
+.octicon {
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}

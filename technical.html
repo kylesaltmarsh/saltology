@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-128384092-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-128384092-1');
+    </script>
+
+    <link rel="icon" type="image/png" href="images/Saltologyicon.png">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Saltology &mdash; About Me</title>
+    <!-- <link rel="stylesheet" href="css/aos.min.css"> -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/hamburgers/hamburgers.min.css">
+    <link rel="stylesheet" href="css/animsition.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" id="wp-bigfoot-css" href="css/bigfoot.css" type="text/css" media="all">
+    <link rel="stylesheet" href="css/style.css">
+    <script type="text/javascript" src="js/jquery-core.js" id="jquery-core-js"></script>
+    <script type="text/javascript" src="js/jquery-migrate.js" id="jquery-migrate-js"></script>
+</head>
+
+<body>
+
+    <div class="js-animsition animsition" data-animsition-in-class="fade-in" data-animsition-out-class="fade-out">
+
+        <header class="templateux-navbar" data-aos="fade-down">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-9 col-9">
+                        <div class="site-logo"><img src="images/Saltologyicon.png" style="height:75px;"
+                                alt="Image placeholder" class="img-fluid mb-4 rounded"><a href="index.html"
+                                class="animsition-link">saltology</a></div>
+                    </div>
+                    <div class="col-sm-3 col-3 text-right">
+
+                        <button class="hamburger hamburger--spin toggle-menu ml-auto js-toggle-menu" type="button">
+                            <span class="hamburger-box">
+                                <span class="hamburger-inner"></span>
+                            </span>
+                        </button>
+
+                        <nav class="templateux-menu js-templateux-menu" role="navigation">
+                            <ul class="list-unstyled">
+                                <li class="active"><a href="aboutme.html" class="animsition-link">About Me</a></li>
+                                <li><a href="index.html" class="animsition-link">Home</a></li>
+                            </ul>
+                        </nav>
+
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div id="blog" class="site-section">
+            <div class="container">
+
+                <div class="row">
+
+                    <div class="col-md-8" data-aos="fade-up">
+
+                        <h1>Technical Projects and Experience</h1>
+
+                        <section id="work">
+                            <h2 class="mb-3 mt-5 mb-3">🤖 Robotics</h2>
+                        </section>
+                        <p>Worked as a full stack robotics engineer with two unmanned ground vehicles (UGV), the
+                            ClearPath Jackal and Boston Dynamics Spot. Focus was on building...</p>
+
+                        <ul>
+                            <li> <b>Autonomy stack and Payload Integration</b> - Evaluated, tested and integrated
+                                various sensors into the autonomy stack and payload. T265 camera, IMUs
+                            </li>
+
+                            <li> <b>Localisation and Mapping</b> - Performing Simultaneous Localisation and Mapping
+                                (SLAM) using Google Cartographer and localisation to pre-built maps using Iterative
+                                Closest Point (ICP) techniques within various packages. Solved for april tag position
+                                and quaternions by optimising residuals between surveyed target positions on site.
+                                Utilisation of Cloud Compare for point cloud processing. <a
+                                    href="https://github.com/kylesaltmarsh/apriltag_position_corrector"
+                                    target="blank"><span class="fa fa-github"></span></a></b>. Integrated april tags
+                                into localisation and mapping systems to improve accuracy.
+                            </li>
+
+                            <li> <b>Path Planning and Navigation</b> - Assessed, tested and tuned various:
+                                <ul>
+                                    <li>
+                                        Obstacle marking algorithms and packages, utilising lidar and depth cameras.
+                                    </li>
+                                    <li>
+                                        Cost map algorithms and packages.
+                                    </li>
+                                    <li>
+                                        Global planning algorithms and packages such Rapidly Exploring Random Trees
+                                        (RRT).
+                                    </li>
+                                    <li>
+                                        Local planning and control algorithms and packages such as Timed Elastic Bands.
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <li> <b>Robot Behaviour Control System</b> - Built a full control system using behaviour
+                                trees to perform autonomous surveillance missions. Implementation included connection to
+                                various subsystems such as external equipment (housing sea container, charging stations,
+                                payloads and cloud). Used a Spot ROS wrapper to implement custom autonomy stack on
+                                SpotCore. Design was compatible with fleet management systems to control multiple robots
+                                and systems.
+                            </li>
+
+                            <li> <b>Hardware and Embedded systems</b> - Modified Jackal e-stop controller firmware on
+                                ESP32 to utilise heartbeat functionality. Integrated custom e-stops into robotic
+                                platforms. Optimised full stack parameters based on compute constraints.
+                            </li>
+
+                            <li> <b>Cyber and Networking</b> - Set up a VLAN from the Perth robotics lab to Karratha
+                                sites to allow remote operation capability. Robots authenticated to the network using
+                                the IEEE 802.1X network standard.
+                            </li>
+
+                            <li> <b>Manipulation</b> - Assisted in building robotic manipulation sequences and testing
+                                using NASA's <a
+                                    href=&quot;https://ntrs.nasa.gov/api/citations/20150000509/downloads/20150000509.pdf&quot;
+                                    target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;>affordance template
+                                    technology
+                                </a>. Conducted a PoC with the AWS Sagemaker, AWS Robomaker and Max Kelsen teams on
+                                utilising reinforcement learning for dextrous robotic manipulation. The <a
+                                    href=&quot;https://aws.amazon.com/blogs/machine-learning/introducing-amazon-sagemaker-reinforcement-learning-components-for-open-source-kubeflow-pipelines/&quot;
+                                    target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;>framework</a> utilised
+                                ROS simulation in Robomaker, RAY RLlib <a
+                                    href="https://github.com/kylesaltmarsh/ray_rllib" target="blank"><span
+                                        class="fa fa-github"></span></a></b> in Sagemaker and Kubeflow pipelines.
+                            </li>
+
+                            <li> <b>CICD</b> - Robot images were containerised using docker. CircleCI was used to manage
+                                repositories and packages.
+                            </li>
+
+                            <li> <b>Cloud Integration</b> - Deployed AWS Greengrass on robotic platforms to allow fleet
+                                docker deployments and cloud streaming of robot metrics and metadata using MQ Telemetry
+                                Transport (MQTT). Utilised AWS Kinesis Video Streams to live stream video from robotic
+                                platforms to cloud. Data ingested and integrated into cloud hosted digital twin.
+                            </li>
+
+                            <li> <b>Site trials</b> - Designed and led the install of a robot housing station sea
+                                container on gas processing plant. Led and conducted testing in lab and on site.
+                                Designed and ran remote operations room, including design and build of Kabana
+                                dashboards.
+                            </li>
+
+                        </ul>
+
+                        <p><b>Languages</b></p>
+                        <div class="mb-2">
+                            <span data-view-component="true" class="Progress">
+                                <span style="background-color:#3572A5 !important;;width: 80%;" itemprop="keywords"
+                                    aria-label="Python 45.4" data-view-component="true"
+                                    class="Progress-item color-bg-success-emphasis"></span>
+                                <span style="background-color:#f34b7d !important;;width: 20%;" itemprop="keywords"
+                                    aria-label="C++ 15.2" data-view-component="true"
+                                    class="Progress-item color-bg-success-emphasis"></span>
+                            </span>
+                        </div>
+
+                        <ul class="list-style-none">
+                            <li class="d-inline">
+                                <svg style="color:#3572A5;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                    version="1.1" width="16" data-view-component="true"
+                                    class="octicon octicon-dot-fill mr-2">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
+                                </svg>
+                                <span class="color-fg-default text-bold mr-1">Python</span>
+                                <span>80%</span>
+                                </a>
+                            </li>
+
+                            <li class="d-inline">
+                                <svg style="color:#f34b7d;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                    version="1.1" width="16" data-view-component="true"
+                                    class="octicon octicon-dot-fill mr-2">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
+                                </svg>
+                                <span class="color-fg-default text-bold mr-1">C++</span>
+                                <span>20%</span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <p><b>Operating Systems</b></p>
+                        <div class="mb-2">
+                            <span data-view-component="true" class="Progress">
+                                <span style="background-color:#3572A5 !important;;width: 50%;" itemprop="keywords"
+                                    aria-label="Python 45.4" data-view-component="true"
+                                    class="Progress-item color-bg-success-emphasis"></span>
+                                <span style="background-color:#f34b7d !important;;width: 50%;" itemprop="keywords"
+                                    aria-label="C++ 15.2" data-view-component="true"
+                                    class="Progress-item color-bg-success-emphasis"></span>
+                            </span>
+                        </div>
+
+                        <ul class="list-style-none">
+                            <li class="d-inline">
+                                <svg style="color:#3572A5;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                    version="1.1" width="16" data-view-component="true"
+                                    class="octicon octicon-dot-fill mr-2">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
+                                </svg>
+                                <span class="color-fg-default text-bold mr-1">Ubuntu</span>
+                                <span>50%</span>
+                                </a>
+                            </li>
+
+                            <li class="d-inline">
+                                <svg style="color:#f34b7d;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                    version="1.1" width="16" data-view-component="true"
+                                    class="octicon octicon-dot-fill mr-2">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
+                                </svg>
+                                <span class="color-fg-default text-bold mr-1">ROS</span>
+                                <span>50%</span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <p><b>Cloud</b></p>
+                        <div class="mb-2">
+                            <span data-view-component="true" class="Progress">
+                                <span style="background-color:#3572A5 !important;;width: 100%;" itemprop="keywords"
+                                    aria-label="Python 45.4" data-view-component="true"
+                                    class="Progress-item color-bg-success-emphasis"></span>
+                            </span>
+                        </div>
+
+                        <ul class="list-style-none">
+                            <li class="d-inline">
+                                <svg style="color:#3572A5;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                    version="1.1" width="16" data-view-component="true"
+                                    class="octicon octicon-dot-fill mr-2">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
+                                </svg>
+                                <span class="color-fg-default text-bold mr-1">AWS</span>
+                                <span>100%</span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <section id="education">
+                            <h2 class="mb-3 mt-5 mb-3">🧬 Data Science and AI</h2>
+                        </section>
+                        <p>My data science projects spans over my experience at Woodside and IBM.</p>
+
+                        <ul>
+                            <li> <b>Australian Government Red Imported Fire Ant Nest Detection Model [professional]</b>
+                                - Utilised hyperspectral (Ultraviolet light to Long Wave Infra-Red) imagery taken in <a
+                                    href="https://www.brisbanetimes.com.au/national/queensland/eradicating-the-red-imported-fire-ant-with-remote-sensing-20130808-2riwf.html"
+                                    target=&quot;_blank&quot>helicopter surveillance</a> to train a Region Based
+                                Convolutional Neural Network (RCNN) to detect RIFA nests in wide scale images.
+                                Eradication teams were sent to detected nests with high model confidence.
+                            </li>
+
+                            <li> <b>Rio Tinto Dynamic Scheduling Tool [professional]</b> - Used Natural Language
+                                Processing tool Watson Knowledge Studio to build a custom model to analyse maintenance,
+                                operator and planner shift handover logs to extract entities and relationships
+                                pertaining to equipment health. Built a web application in Flask (PoC) and Django (MVP)
+                                which integrated the model endpoint, the Apache CouchDB database and provided REST APIs
+                                to the ReactJS UI. This information was used be the dynamic scheduling team to optimise
+                                the train scheduling.
+                            </li>
+
+                            <li> <b>Classification of bearing health [hackathon] <a
+                                        href="https://github.com/kylesaltmarsh/unearthed-hackathon-2017"
+                                        target="blank"><span class="fa fa-github"></span></a></b> - Amplified sound
+                                signal from fan bearings utilising an array of microphones and beamforming algorithms
+                                and performed feature engineering to extract audio features. Trained two binary
+                                classifiers (a three-layer feedforward neural network and gradient boosted decision
+                                trees model) to classify the bearings as healthy or corroded based on the acoustic
+                                features.
+                            </li>
+
+                            <li> <b>Woodside Investor Relations Tool [professional]</b> - Built a tool in R-Shiny that
+                                analyses the sentiment
+                                of investor relations meeting transcripts in combination with their historic investment
+                                actions to determine the relationship between meeting style and content on investor
+                                sentiment and actions.
+                            </li>
+
+                            <li> <b>Utilising sound signatures to classify plate damage [professional]</b> - Constructed
+                                Finite Element Models (utilising C++ library deal.II) of a plate
+                                to simulate the sound signature under different damaged conditions and locations. A
+                                large simulated data set of the plate with various damage conditions and locations was
+                                collected using the Pawsey Supercomputer. Experimental data was collected and diagnosis
+                                of the damage severity and location was performed using the simulated data set.
+                            </li>
+
+                            <li> <b>Woodside Sensor Anomaly Detector [professional] <a
+                                        href="https://github.com/kylesaltmarsh/quality-control-chart-rules"
+                                        target="blank"><span class="fa fa-github"></span></a></b></b> - Built a tool to
+                                analyse timeseries data from sensors
+                                in the field to detect anomalies utilising exponential moving averages and the process
+                                control <a href="https://en.wikipedia.org/wiki/Nelson_rules"
+                                    target=&quot;_blank&quot>Nelson Rules</a>.
+                            </li>
+
+                            <li> <b>Woodside Major Project Reporting Tool [professional]</b> - Built a tool that rolls
+                                up data from multiple sources
+                                to provide a single view of the status of major projects across the organisation.
+                            </li>
+
+                        </ul>
+
+                        <p><b>Languages</b></p>
+                        <div class="mb-2">
+                            <span data-view-component="true" class="Progress">
+                                <span style="background-color:#3572A5 !important;;width: 50%;" itemprop="keywords"
+                                    aria-label="Python 45.4" data-view-component="true"
+                                    class="Progress-item color-bg-success-emphasis"></span>
+                                <span style="background-color:#f34b7d !important;;width: 50%;" itemprop="keywords"
+                                    aria-label="C++ 15.2" data-view-component="true"
+                                    class="Progress-item color-bg-success-emphasis"></span>
+                            </span>
+                        </div>
+
+                        <ul class="list-style-none">
+                            <li class="d-inline">
+                                <svg style="color:#3572A5;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                    version="1.1" width="16" data-view-component="true"
+                                    class="octicon octicon-dot-fill mr-2">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
+                                </svg>
+                                <span class="color-fg-default text-bold mr-1">Python</span>
+                                <span>50%</span>
+                                </a>
+                            </li>
+
+                            <li class="d-inline">
+                                <svg style="color:#f34b7d;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                    version="1.1" width="16" data-view-component="true"
+                                    class="octicon octicon-dot-fill mr-2">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
+                                </svg>
+                                <span class="color-fg-default text-bold mr-1">R</span>
+                                <span>50%</span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <section id="speaking">
+                            <h2 class="mb-3 mt-5 mb-3">👷‍♂️ Engineering</h2>
+                        </section>
+                        <p>The majority of my engineering experience has been in the intersection between engineering,
+                            reliability and digital.</p>
+
+                        <ul>
+
+                            <li> <b>Electrical Equipment in Hazardous Areas</b> - Built a tool that sampled equipment to
+                                be inspected and dynamically adjusted it's behaviour based on the inspection results.
+                                This tool was built on AWS and integrated directly to SAP through Mulesoft APIs.
+                            </li>
+
+                            <li> <b>Process Safety Valves (Pressure Relief Devices)</b> - Built a tool that used Weibull
+                                analysis to optimise the maintenance interval of the safety valves based on their safety
+                                availability targets. This tool was built on AWS and integrated directly to SAP through
+                                Mulesoft APIs.
+                            </li>
+
+                            <li> <b>Solving Torsional Systems</b> - Built a tool which performed torsional analysis of
+                                rotating equipment and drive train systems utilising the Holzer's method. This solved
+                                for the resonant frequencies, mode shapes and stress profiles of the system and
+                                automated the production of a report.
+                            </li>
+
+                            <li> <b>Equipment Criticality Assessment</b> - Built a tool which gathered data from a
+                                number of sources, including mean time to failure, repair time, redundancy, consequence
+                                of failure and performed a criticality assessment of the equipment. This tool was used
+                                to assess the criticality of all equipment on Woodside assets for maimtenance
+                                prioritisation. This tool was built on AWS and automatically placed data in the
+                                enterprise data lake on a scheduled basis.
+                            </li>
+
+                        </ul>
+
+                        <p><b>Languages</b></p>
+                        <div class="mb-2">
+                            <span data-view-component="true" class="Progress">
+                                <span style="background-color:#3572A5 !important;;width: 20%;" itemprop="keywords"
+                                    aria-label="Python 45.4" data-view-component="true"
+                                    class="Progress-item color-bg-success-emphasis"></span>
+                                <span style="background-color:#f34b7d !important;;width: 80%;" itemprop="keywords"
+                                    aria-label="C++ 15.2" data-view-component="true"
+                                    class="Progress-item color-bg-success-emphasis"></span>
+                            </span>
+                        </div>
+
+                        <ul class="list-style-none">
+                            <li class="d-inline">
+                                <svg style="color:#3572A5;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                    version="1.1" width="16" data-view-component="true"
+                                    class="octicon octicon-dot-fill mr-2">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
+                                </svg>
+                                <span class="color-fg-default text-bold mr-1">Python</span>
+                                <span>20%</span>
+                                </a>
+                            </li>
+
+                            <li class="d-inline">
+                                <svg style="color:#f34b7d;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                    version="1.1" width="16" data-view-component="true"
+                                    class="octicon octicon-dot-fill mr-2">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
+                                </svg>
+                                <span class="color-fg-default text-bold mr-1">Typescript</span>
+                                <span>80%</span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <p><b>Cloud</b></p>
+                        <div class="mb-2">
+                            <span data-view-component="true" class="Progress">
+                                <span style="background-color:#3572A5 !important;;width: 100%;" itemprop="keywords"
+                                    aria-label="Python 45.4" data-view-component="true"
+                                    class="Progress-item color-bg-success-emphasis"></span>
+                            </span>
+                        </div>
+
+                        <ul class="list-style-none">
+                            <li class="d-inline">
+                                <svg style="color:#3572A5;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                    version="1.1" width="16" data-view-component="true"
+                                    class="octicon octicon-dot-fill mr-2">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
+                                </svg>
+                                <span class="color-fg-default text-bold mr-1">AWS</span>
+                                <span>100%</span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <section id="speaking">
+                            <h2 class="mb-3 mt-5 mb-3">👨‍🎓 PhD</h2>
+                        </section>
+                        <p>My PhD candidature was performed with the University of Western Australia and the Sonar
+                            Systems team of <a href="https://www.dst.defence.gov.au/" target=&quot;_blank&quot>Defence
+                                Science and Technology Group</a> of the Australian Defence Force. The work performed can
+                            be summarised into the following fields <a href="https://github.com/kylesaltmarsh/phd"
+                                target="blank"><span class="fa fa-github"></span></a>.</p>
+                        <ul>
+                            <li> <b>Applied Mathematics</b> - Over my canditature I built a strong background in applied
+                                mathematics,
+                                including numerical analysis and partial differential
+                                equations of dynamical systems. In particular there was heavy modelling of the acoustic
+                                wave equation and the
+                                vibration equation for plates. This included separation of variables, solving
+                                eigensystems, utilising properties of orthogonality, applying fourier and fourier-bessel
+                                transforms, modelling response functions and utilising Green's functions.
+                            </li>
+
+                            <li> <b>Experimental Physics</b> - Multiple experiments were performed over my candidature
+                                to validate the
+                                mathematical models. Experiments were designed, procured and constructed by the team.
+                                These included the use
+                                of a various sensor types, mechanical shakers, impact hammers, laser vibrometers and
+                                data acquisition systems.
+                            </li>
+
+                            <li> <b>Finite Element Modelling</b> - Finite element modelling was used to validate the
+                                mathematical models. The finite element modelling was performed on the fluid-structure
+                                interaction problems in the commercial software packages ANSYS and
+                                ABAQUS.
+                            </li>
+
+                            <li> <b>Data and Signal Processing</b> - Data and signal processing was used to extract
+                                information from the
+                                experimental data. This included the use discrete fourier transforms, smoothing wavelet
+                                transforms, filtering, and
+                                signal processing.
+                            </li>
+
+                        </ul>
+
+                        <p><b>Languages</b></p>
+                        <div class="mb-2">
+                            <span data-view-component="true" class="Progress">
+                                <span style="background-color:#3572A5 !important;;width: 50%;" itemprop="keywords"
+                                    aria-label="Python 45.4" data-view-component="true"
+                                    class="Progress-item color-bg-success-emphasis"></span>
+                                <span style="background-color:#f34b7d !important;;width: 50%;" itemprop="keywords"
+                                    aria-label="C++ 15.2" data-view-component="true"
+                                    class="Progress-item color-bg-success-emphasis"></span>
+                            </span>
+                        </div>
+
+                        <ul class="list-style-none">
+                            <li class="d-inline">
+                                <svg style="color:#3572A5;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                    version="1.1" width="16" data-view-component="true"
+                                    class="octicon octicon-dot-fill mr-2">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
+                                </svg>
+                                <span class="color-fg-default text-bold mr-1">Python</span>
+                                <span>50%</span>
+                                </a>
+                            </li>
+
+                            <li class="d-inline">
+                                <svg style="color:#f34b7d;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                    version="1.1" width="16" data-view-component="true"
+                                    class="octicon octicon-dot-fill mr-2">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
+                                </svg>
+                                <span class="color-fg-default text-bold mr-1">Mathematica</span>
+                                <span>50%</span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <section id="speaking">
+                            <h2 class="mb-3 mt-5 mb-3">👨‍🎓 Undergraduate</h2>
+                        </section>
+                        <p>Studied mechanical engineering, physics and applied mathematics.</p>
+
+                        <li> <b>Robotics Project</b> - Built a wheeled robot that could navigate an obstacle course,
+                            including deploying a bridge to cross a gap wider than the robot's largest dimension.
+                            The robot was built using a microcontroller and a number of sensors. The robot was
+                            programmed using C++ and the Arduino IDE.
+                        </li>
+
+                        <li> <b>Geophysics project</b> - Utilised the finite difference method to model the propagation
+                            of
+                            seismic waves through a 3D model of the ocean and seabed. The model was validated using the
+                            analytical solution of the wave equation.
+                        </li>
+
+
+
+                        </ul>
+
+                    </div>
+
+                    <div class="col-md-4 sidebar pl-md-5">
+
+                        <div class="sidebar-box">
+                            <img src="images/best spot.JPG" alt="Image placeholder" class="img-fluid mb-4 rounded">
+
+                            <section id="contact">
+                                <h2 class="mb-3 mt-5 mb-3">✉️ Contact</h2>
+                            </section>
+                            <p>Feel free to reach out and send me an email.</p>
+                            <p>kyle.m.saltmarsh AT gmail.com</p>
+                        </div>
+
+
+                    </div>
+                </div>
+
+</body>
+
+
+<footer class="templateux-footer">
+
+    <div class="div-kyle">
+        <h1><a href="https://www.linkedin.com/in/kylesaltmarsh/?originalSubdomain=au" target="blank" class="p-3"><span
+                    class="fa fa-linkedin-square"></span></a>
+            <a href="https://www.instagram.com/kylesaltmarsh/" target="blank" class="p-3"><span
+                    class="fa fa-instagram"></span></a>
+            <a href="https://github.com/kylesaltmarsh" target="blank" class="p-3"><span class="fa fa-github"></span></a>
+        </h1>
+
+    </div>
+
+
+    <div class="div-kyle">
+
+        <div id="mc_embed_signup">
+            <form
+                action="https://live.us20.list-manage.com/subscribe/post?u=669beaecf33bd931931813b48&amp;id=75816fef41"
+                method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate"
+                target="_blank" novalidate>
+                <div id="mc_embed_signup_scroll">
+                    <label for="mce-EMAIL">Saltology - <i>(noun)</i> - The study of the interesting, informative and
+                        inspiring.</label>
+
+                    <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address"
+                        required>
+                    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text"
+                            name="b_669beaecf33bd931931813b48_75816fef41" tabindex="-1" value=""></div>
+                    <div class="clear"><input type="submit" value="Subscribe" name="subscribe"
+                            id="mc-embedded-subscribe" class="button"></div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+
+</footer>
+
+</body>
+
+<script type="text/javascript" src="js/bigfoot.js" id="bigfoot-js"></script>
+<script type="text/javascript" src="js/wp-bigfoot.js" id="wp-bigfoot-js"></script>
+
+<script src="js/scripts-all.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+
+</html>
