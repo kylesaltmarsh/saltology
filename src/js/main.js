@@ -3,6 +3,21 @@ AOS.init({
   duration: 1000,
 })
 
+// Theme toggle
+document.addEventListener("DOMContentLoaded", function() {
+  var toggle = document.querySelector('.theme-toggle');
+  if (toggle) {
+    toggle.addEventListener('click', function() {
+      var current = document.documentElement.getAttribute('data-theme');
+      var next = current === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', next === 'light' ? '#fafafa' : '#0a0a0a');
+    });
+  }
+});
+
 document.addEventListener("DOMContentLoaded", function() {
   var lazyloadImages;    
 

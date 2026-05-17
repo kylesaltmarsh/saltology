@@ -110,12 +110,13 @@ permalink: "/about/"
                         <script src="https://www.amcharts.com/lib/3/themes/dark.js" type="text/javascript"></script>
                         <div id="mapdiv" style="width: 750px; height: 400px;"></div>
                         <script type="text/javascript">
+                            var isLight = document.documentElement.getAttribute('data-theme') === 'light';
                             var map = AmCharts.makeChart("mapdiv", {
                                 type: "map",
-                                theme: "dark",
+                                theme: isLight ? "light" : "dark",
                                 projection: "mercator",
                                 panEventsEnabled: true,
-                                backgroundColor: "#535364",
+                                backgroundColor: isLight ? "#fafafa" : "#0a0a0a",
                                 backgroundAlpha: 1,
                                 zoomControl: {
                                     zoomControlEnabled: true
@@ -209,12 +210,12 @@ permalink: "/about/"
                                 },
                                 areasSettings: {
                                     autoZoom: true,
-                                    color: "#B4B4B7",
-                                    colorSolid: "#84ADE9",
-                                    selectedColor: "#84ADE9",
-                                    outlineColor: "#666666",
-                                    rollOverColor: "#9EC2F7",
-                                    rollOverOutlineColor: "#000000"
+                                    color: isLight ? "#ddd" : "#222",
+                                    colorSolid: isLight ? "#c62828" : "#dc3545",
+                                    selectedColor: isLight ? "#c62828" : "#dc3545",
+                                    outlineColor: isLight ? "#ccc" : "#333",
+                                    rollOverColor: isLight ? "#b71c1c" : "#ff4757",
+                                    rollOverOutlineColor: isLight ? "#bbb" : "#444"
                                 }
                             });
                         </script>
@@ -332,7 +333,7 @@ permalink: "/about/"
                     <div class="col-md-4 sidebar pl-md-5">
 
                         <div class="sidebar-box">
-                            <img src="/images/kylesaltmarsh.JPG" alt="Kyle Saltmarsh" class="img-fluid mb-4 rounded">
+                            <img src="/images/kylesaltmarsh.JPG" alt="Kyle Saltmarsh" class="img-fluid mb-4" style="border-radius: var(--radius);">
 
                             <section id="contact">
                                 <h2 class="mb-3 mt-5 mb-3">✉️ Contact</h2>
