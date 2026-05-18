@@ -48,6 +48,8 @@
   --color-link: #0077aa;
   --color-nav-bg: rgba(255, 255, 255, 0.85);
   --color-hamburger: #333;
+  --color-accent-secondary: #b300b3;
+  --color-accent-tertiary: #0088bb;
 }
 
 /* ---------- Theme Toggle ---------- */

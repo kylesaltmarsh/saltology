@@ -1,7 +1,7 @@
 ---
 layout: base.njk
 title: "Technical"
-description: "Kyle Saltmarsh technical skills and projects - AI, robotics, software engineering, and data science."
+description: "Kyle Saltmarsh technical skills and projects - agentic AI, robotics, process control, machine learning, and software engineering."
 ogType: website
 permalink: "/technical/"
 ---
@@ -14,6 +14,113 @@ permalink: "/technical/"
                     <div class="col-md-8" data-aos="fade-up">
 
                         <h1>Technical Projects and Experience</h1>
+
+                        <section id="agentic-ai">
+                            <h2 class="mb-3 mt-5 mb-3">🧠 Agentic AI</h2>
+                        </section>
+                        <p>Building autonomous AI agents that solve real problems — from automating personal productivity, 
+                            computer-aided engineering pipelines to autonomous penetration testing
+                            and industrial operations advisory.</p>
+
+                        <ul>
+                            <li> <b>Computer-Aided Engineering Automation</b> - Built an end-to-end
+                                AI agent pipeline that automates the design and optimisation of engineering
+                                simulations. An AI concept selector agent recommends initial designs from a
+                                knowledge base, then an automation agent generates simulation code, runs
+                                iterative optimisation loops using Bayesian optimisation (simulate → extract
+                                results → adjust parameters), and produces automated reports — eliminating
+                                months of manual work. Architecture generalises across CAE tools including
+                                electromagnetic solvers and finite element modelling packages.
+                            </li>
+
+                            <!-- <li> <b>Autonomous Vulnerability Research</b> - Developed an autonomous
+                                security research agent that performs end-to-end firmware vulnerability
+                                assessment with zero human intervention. The agent pipeline includes static
+                                analysis (filesystem extraction, Ghidra headless decompilation, pattern scanning),
+                                CVE correlation and patch verification against decompiled source, runtime
+                                validation (QEMU emulation with custom exploit scripts), and automated
+                                remediation generation. Demonstrated on production firmware — 11 findings
+                                including confirmed live exploits.
+                            </li> -->
+
+                            <li> <b>LNG Operations Agent</b> - Built an AI agent with deep knowledge of
+                                complex LNG train operations — including procedures, process flows,
+                                equipment interdependencies, and historical operational data.
+                            </li>
+
+                            <li> <b>Autonomous Penetration Testing</b> - Building automated pen testing
+                                agents that autonomously plan, execute, and report on security assessments
+                                of enterprise infrastructure.
+                            </li>
+                        </ul>
+
+                        <p><b>Models</b></p>
+                        <div class="mb-2">
+                            <span role="img" aria-label="Model distribution" data-view-component="true" class="Progress">
+                                <span style="background-color:var(--color-brand) !important;;width: 50%;" itemprop="keywords"
+                                    aria-label="Claude 50" data-view-component="true"
+                                    class="Progress-item color-bg-success-emphasis"></span>
+                                <span style="background-color:var(--color-accent-secondary) !important;;width: 25%;" itemprop="keywords"
+                                    aria-label="GPT 25" data-view-component="true"
+                                    class="Progress-item color-bg-success-emphasis"></span>
+                                <span style="background-color:var(--color-accent-tertiary) !important;;width: 25%;" itemprop="keywords"
+                                    aria-label="Gemini 25" data-view-component="true"
+                                    class="Progress-item color-bg-success-emphasis"></span>
+                            </span>
+                        </div>
+
+                        <ul class="list-style-none">
+                            <li class="d-inline">
+                                <svg style="color:var(--color-brand);" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                    version="1.1" width="16" data-view-component="true"
+                                    class="octicon octicon-dot-fill mr-2">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
+                                </svg>
+                                <span class="color-fg-default text-bold mr-1">Claude</span>
+                                <span>50%</span>
+                            </li>
+
+                            <li class="d-inline">
+                                <svg style="color:var(--color-accent-secondary);" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                    version="1.1" width="16" data-view-component="true"
+                                    class="octicon octicon-dot-fill mr-2">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
+                                </svg>
+                                <span class="color-fg-default text-bold mr-1">GPT</span>
+                                <span>25%</span>
+                            </li>
+
+                            <li class="d-inline">
+                                <svg style="color:var(--color-accent-tertiary);" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                    version="1.1" width="16" data-view-component="true"
+                                    class="octicon octicon-dot-fill mr-2">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
+                                </svg>
+                                <span class="color-fg-default text-bold mr-1">Gemini</span>
+                                <span>25%</span>
+                            </li>
+                        </ul>
+
+                        <p><b>Agent Harness</b></p>
+                        <div class="mb-2">
+                            <span role="img" aria-label="Agent harness distribution" data-view-component="true" class="Progress">
+                                <span style="background-color:var(--color-brand) !important;;width: 100%;" itemprop="keywords"
+                                    aria-label="VS Code + GitHub Copilot 100" data-view-component="true"
+                                    class="Progress-item color-bg-success-emphasis"></span>
+                            </span>
+                        </div>
+
+                        <ul class="list-style-none">
+                            <li class="d-inline">
+                                <svg style="color:var(--color-brand);" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                    version="1.1" width="16" data-view-component="true"
+                                    class="octicon octicon-dot-fill mr-2">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
+                                </svg>
+                                <span class="color-fg-default text-bold mr-1">VS Code + GitHub Copilot</span>
+                                <span>100%</span>
+                            </li>
+                        </ul>
 
                         <section id="work">
                             <h2 class="mb-3 mt-5 mb-3">🤖 Robotics</h2>
@@ -107,10 +214,10 @@ permalink: "/technical/"
                         <p><b>Languages</b></p>
                         <div class="mb-2">
                             <span role="img" aria-label="Language distribution" data-view-component="true" class="Progress">
-                                <span style="background-color:#3572A5 !important;;width: 80%;" itemprop="keywords"
+                                <span style="background-color:var(--color-brand) !important;;width: 80%;" itemprop="keywords"
                                     aria-label="Python 45.4" data-view-component="true"
                                     class="Progress-item color-bg-success-emphasis"></span>
-                                <span style="background-color:#f34b7d !important;;width: 20%;" itemprop="keywords"
+                                <span style="background-color:var(--color-accent-secondary) !important;;width: 20%;" itemprop="keywords"
                                     aria-label="C++ 15.2" data-view-component="true"
                                     class="Progress-item color-bg-success-emphasis"></span>
                             </span>
@@ -118,7 +225,7 @@ permalink: "/technical/"
 
                         <ul class="list-style-none">
                             <li class="d-inline">
-                                <svg style="color:#3572A5;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                <svg style="color:var(--color-brand);" aria-hidden="true" height="16" viewBox="0 0 16 16"
                                     version="1.1" width="16" data-view-component="true"
                                     class="octicon octicon-dot-fill mr-2">
                                     <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
@@ -129,7 +236,7 @@ permalink: "/technical/"
                             </li>
 
                             <li class="d-inline">
-                                <svg style="color:#f34b7d;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                <svg style="color:var(--color-accent-secondary);" aria-hidden="true" height="16" viewBox="0 0 16 16"
                                     version="1.1" width="16" data-view-component="true"
                                     class="octicon octicon-dot-fill mr-2">
                                     <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
@@ -143,10 +250,10 @@ permalink: "/technical/"
                         <p><b>Operating Systems</b></p>
                         <div class="mb-2">
                             <span role="img" aria-label="Language distribution" data-view-component="true" class="Progress">
-                                <span style="background-color:#3572A5 !important;;width: 50%;" itemprop="keywords"
+                                <span style="background-color:var(--color-brand) !important;;width: 50%;" itemprop="keywords"
                                     aria-label="Python 45.4" data-view-component="true"
                                     class="Progress-item color-bg-success-emphasis"></span>
-                                <span style="background-color:#f34b7d !important;;width: 50%;" itemprop="keywords"
+                                <span style="background-color:var(--color-accent-secondary) !important;;width: 50%;" itemprop="keywords"
                                     aria-label="C++ 15.2" data-view-component="true"
                                     class="Progress-item color-bg-success-emphasis"></span>
                             </span>
@@ -154,7 +261,7 @@ permalink: "/technical/"
 
                         <ul class="list-style-none">
                             <li class="d-inline">
-                                <svg style="color:#3572A5;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                <svg style="color:var(--color-brand);" aria-hidden="true" height="16" viewBox="0 0 16 16"
                                     version="1.1" width="16" data-view-component="true"
                                     class="octicon octicon-dot-fill mr-2">
                                     <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
@@ -165,7 +272,7 @@ permalink: "/technical/"
                             </li>
 
                             <li class="d-inline">
-                                <svg style="color:#f34b7d;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                <svg style="color:var(--color-accent-secondary);" aria-hidden="true" height="16" viewBox="0 0 16 16"
                                     version="1.1" width="16" data-view-component="true"
                                     class="octicon octicon-dot-fill mr-2">
                                     <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
@@ -179,7 +286,7 @@ permalink: "/technical/"
                         <p><b>Cloud</b></p>
                         <div class="mb-2">
                             <span role="img" aria-label="Language distribution" data-view-component="true" class="Progress">
-                                <span style="background-color:#3572A5 !important;;width: 100%;" itemprop="keywords"
+                                <span style="background-color:var(--color-brand) !important;;width: 100%;" itemprop="keywords"
                                     aria-label="Python 45.4" data-view-component="true"
                                     class="Progress-item color-bg-success-emphasis"></span>
                             </span>
@@ -187,7 +294,7 @@ permalink: "/technical/"
 
                         <ul class="list-style-none">
                             <li class="d-inline">
-                                <svg style="color:#3572A5;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                <svg style="color:var(--color-brand);" aria-hidden="true" height="16" viewBox="0 0 16 16"
                                     version="1.1" width="16" data-view-component="true"
                                     class="octicon octicon-dot-fill mr-2">
                                     <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
@@ -198,8 +305,82 @@ permalink: "/technical/"
                             </li>
                         </ul>
 
+                        <section id="process-control">
+                            <h2 class="mb-3 mt-5 mb-3">🏭 Process Control & Automation</h2>
+                        </section>
+                        <p>Working at the intersection of AI and industrial process control — leading
+                            technical assessments, digital twin pilots, and automation initiatives across
+                            LNG and gas processing operations.</p>
+
+                        <ul>
+                            <li> <b>LNG Startup Advisor</b> - Led development of a platform that digitises
+                                complex LNG train startup procedures and connects them to live and historical
+                                plant data (DCS tags, trends, alarms, screen mimics). Enables operators to
+                                compare live startups against best practice, review lessons learned per
+                                phase/step, and track deviations. Deployed across
+                                multiple critical units (NRU, FRAC, MCHE) and proven in live operations.
+                            </li>
+
+                            <li> <b>Site Optimisation Technology Assessment</b> - Led a technical and market
+                                analysis of Layer 3.5 site optimisation solutions (e.g. Imubit, Yokogawa FKDPP).
+                                Assessed the landscape from traditional advanced process control (MPC) through
+                                to deep learning and reinforcement learning approaches for real-time process
+                                optimisation. Evaluated trade-offs in data requirements, interpretability,
+                                integration complexity, and operational risk.
+                            </li>
+
+                            <li> <b>Real-Time Process Digital Twin Pilots</b> - Led pilots with real-time
+                                process digital twin software for anomaly detection, scenario analysis, soft
+                                sensors, and forward prediction on operational LNG assets.
+                            </li>
+
+                            <li> <b>DCS Automation</b> - Analysing operational DCS data (alarms, events,
+                                operator actions) to identify automation opportunities. Working with IEC 61131-3
+                                Sequential Function Charts and Honeywell Experion PKS Sequential Control Modules
+                                to scope automation pilots across well startup, MEG injection and compression
+                                procedures — targeting reduced manual operator intervention in routine sequential
+                                operations.
+                            </li>
+                        </ul>
+
+                        <p><b>Languages</b></p>
+                        <div class="mb-2">
+                            <span role="img" aria-label="Language distribution" data-view-component="true" class="Progress">
+                                <span style="background-color:var(--color-brand) !important;;width: 70%;" itemprop="keywords"
+                                    aria-label="Python 70" data-view-component="true"
+                                    class="Progress-item color-bg-success-emphasis"></span>
+                                <span style="background-color:var(--color-accent-tertiary) !important;;width: 30%;" itemprop="keywords"
+                                    aria-label="IEC 61131-3 30" data-view-component="true"
+                                    class="Progress-item color-bg-success-emphasis"></span>
+                            </span>
+                        </div>
+
+                        <ul class="list-style-none">
+                            <li class="d-inline">
+                                <svg style="color:var(--color-brand);" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                    version="1.1" width="16" data-view-component="true"
+                                    class="octicon octicon-dot-fill mr-2">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
+                                </svg>
+                                <span class="color-fg-default text-bold mr-1">Python</span>
+                                <span>70%</span>
+                                </a>
+                            </li>
+
+                            <li class="d-inline">
+                                <svg style="color:var(--color-accent-tertiary);" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                    version="1.1" width="16" data-view-component="true"
+                                    class="octicon octicon-dot-fill mr-2">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
+                                </svg>
+                                <span class="color-fg-default text-bold mr-1">IEC 61131-3</span>
+                                <span>30%</span>
+                                </a>
+                            </li>
+                        </ul>
+
                         <section id="education">
-                            <h2 class="mb-3 mt-5 mb-3">🧬 Data Science and AI</h2>
+                            <h2 class="mb-3 mt-5 mb-3">🧬 Machine Learning</h2>
                         </section>
                         <p>My data science projects spans over my experience at Woodside and IBM.</p>
 
@@ -265,10 +446,10 @@ permalink: "/technical/"
                         <p><b>Languages</b></p>
                         <div class="mb-2">
                             <span role="img" aria-label="Language distribution" data-view-component="true" class="Progress">
-                                <span style="background-color:#3572A5 !important;;width: 50%;" itemprop="keywords"
+                                <span style="background-color:var(--color-brand) !important;;width: 50%;" itemprop="keywords"
                                     aria-label="Python 45.4" data-view-component="true"
                                     class="Progress-item color-bg-success-emphasis"></span>
-                                <span style="background-color:#f34b7d !important;;width: 50%;" itemprop="keywords"
+                                <span style="background-color:var(--color-accent-secondary) !important;;width: 50%;" itemprop="keywords"
                                     aria-label="C++ 15.2" data-view-component="true"
                                     class="Progress-item color-bg-success-emphasis"></span>
                             </span>
@@ -276,7 +457,7 @@ permalink: "/technical/"
 
                         <ul class="list-style-none">
                             <li class="d-inline">
-                                <svg style="color:#3572A5;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                <svg style="color:var(--color-brand);" aria-hidden="true" height="16" viewBox="0 0 16 16"
                                     version="1.1" width="16" data-view-component="true"
                                     class="octicon octicon-dot-fill mr-2">
                                     <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
@@ -287,7 +468,7 @@ permalink: "/technical/"
                             </li>
 
                             <li class="d-inline">
-                                <svg style="color:#f34b7d;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                <svg style="color:var(--color-accent-secondary);" aria-hidden="true" height="16" viewBox="0 0 16 16"
                                     version="1.1" width="16" data-view-component="true"
                                     class="octicon octicon-dot-fill mr-2">
                                     <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
@@ -336,10 +517,10 @@ permalink: "/technical/"
                         <p><b>Languages</b></p>
                         <div class="mb-2">
                             <span role="img" aria-label="Language distribution" data-view-component="true" class="Progress">
-                                <span style="background-color:#3572A5 !important;;width: 20%;" itemprop="keywords"
+                                <span style="background-color:var(--color-brand) !important;;width: 20%;" itemprop="keywords"
                                     aria-label="Python 45.4" data-view-component="true"
                                     class="Progress-item color-bg-success-emphasis"></span>
-                                <span style="background-color:#f34b7d !important;;width: 80%;" itemprop="keywords"
+                                <span style="background-color:var(--color-accent-secondary) !important;;width: 80%;" itemprop="keywords"
                                     aria-label="C++ 15.2" data-view-component="true"
                                     class="Progress-item color-bg-success-emphasis"></span>
                             </span>
@@ -347,7 +528,7 @@ permalink: "/technical/"
 
                         <ul class="list-style-none">
                             <li class="d-inline">
-                                <svg style="color:#3572A5;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                <svg style="color:var(--color-brand);" aria-hidden="true" height="16" viewBox="0 0 16 16"
                                     version="1.1" width="16" data-view-component="true"
                                     class="octicon octicon-dot-fill mr-2">
                                     <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
@@ -358,7 +539,7 @@ permalink: "/technical/"
                             </li>
 
                             <li class="d-inline">
-                                <svg style="color:#f34b7d;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                <svg style="color:var(--color-accent-secondary);" aria-hidden="true" height="16" viewBox="0 0 16 16"
                                     version="1.1" width="16" data-view-component="true"
                                     class="octicon octicon-dot-fill mr-2">
                                     <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
@@ -372,7 +553,7 @@ permalink: "/technical/"
                         <p><b>Cloud</b></p>
                         <div class="mb-2">
                             <span role="img" aria-label="Language distribution" data-view-component="true" class="Progress">
-                                <span style="background-color:#3572A5 !important;;width: 100%;" itemprop="keywords"
+                                <span style="background-color:var(--color-brand) !important;;width: 100%;" itemprop="keywords"
                                     aria-label="Python 45.4" data-view-component="true"
                                     class="Progress-item color-bg-success-emphasis"></span>
                             </span>
@@ -380,7 +561,7 @@ permalink: "/technical/"
 
                         <ul class="list-style-none">
                             <li class="d-inline">
-                                <svg style="color:#3572A5;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                <svg style="color:var(--color-brand);" aria-hidden="true" height="16" viewBox="0 0 16 16"
                                     version="1.1" width="16" data-view-component="true"
                                     class="octicon octicon-dot-fill mr-2">
                                     <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
@@ -436,10 +617,10 @@ permalink: "/technical/"
                         <p><b>Languages</b></p>
                         <div class="mb-2">
                             <span role="img" aria-label="Language distribution" data-view-component="true" class="Progress">
-                                <span style="background-color:#3572A5 !important;;width: 50%;" itemprop="keywords"
+                                <span style="background-color:var(--color-brand) !important;;width: 50%;" itemprop="keywords"
                                     aria-label="Python 45.4" data-view-component="true"
                                     class="Progress-item color-bg-success-emphasis"></span>
-                                <span style="background-color:#f34b7d !important;;width: 50%;" itemprop="keywords"
+                                <span style="background-color:var(--color-accent-secondary) !important;;width: 50%;" itemprop="keywords"
                                     aria-label="C++ 15.2" data-view-component="true"
                                     class="Progress-item color-bg-success-emphasis"></span>
                             </span>
@@ -447,7 +628,7 @@ permalink: "/technical/"
 
                         <ul class="list-style-none">
                             <li class="d-inline">
-                                <svg style="color:#3572A5;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                <svg style="color:var(--color-brand);" aria-hidden="true" height="16" viewBox="0 0 16 16"
                                     version="1.1" width="16" data-view-component="true"
                                     class="octicon octicon-dot-fill mr-2">
                                     <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
@@ -458,7 +639,7 @@ permalink: "/technical/"
                             </li>
 
                             <li class="d-inline">
-                                <svg style="color:#f34b7d;" aria-hidden="true" height="16" viewBox="0 0 16 16"
+                                <svg style="color:var(--color-accent-secondary);" aria-hidden="true" height="16" viewBox="0 0 16 16"
                                     version="1.1" width="16" data-view-component="true"
                                     class="octicon octicon-dot-fill mr-2">
                                     <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8z"></path>
