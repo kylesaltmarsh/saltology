@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Background Color Preview</title>
+<style>
+  * { margin: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #1a1a1a; color: #fff; padding: 24px; }
+  h1 { font-size: 18px; margin-bottom: 16px; opacity: 0.6; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .option {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #333;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .option:hover { border-color: #00ff88; }
+  .preview {
+    height: 220px;
+    padding: 24px;
+    position: relative;
+  }
+  .preview::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.3) 2px, rgba(0,0,0,0.3) 4px);
+    opacity: 0.08;
+  }
+  .label {
+    padding: 12px 16px;
+    background: #111;
+    font-size: 13px;
+  }
+  .label code { color: #00ff88; font-family: 'JetBrains Mono', monospace; }
+  .label .name { font-weight: 600; margin-bottom: 4px; }
+  .label .desc { opacity: 0.5; font-size: 11px; margin-top: 4px; }
+  
+  /* Fake content inside each preview */
+  .hero-title {
+    font-family: 'Orbitron', monospace, sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: linear-gradient(90deg, #e0e0e0, #ff00ff, #00d4ff, #00ff88);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .hero-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #aaa;
+    border-left: 2px solid #00ff88;
+    padding-left: 10px;
+  }
+  .hero-sub::before { content: "> "; color: #00ff88; }
+  .card {
+    margin-top: 16px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.06);
+    font-size: 11px;
+    color: #aaa;
+  }
+  .card-title { color: #fff; font-weight: 600; font-size: 12px; margin-bottom: 2px; }
+  .card-date { color: #ff00ff; opacity: 0.7; font-size: 10px; }
+
+  .current-badge {
+    display: inline-block;
+    background: #00ff88;
+    color: #000;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: 8px;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+<h1>Background Color Options (with your cyberpunk theme elements)</h1>
+<div class="grid">
+
+  <div class="option">
+    <div class="preview" style="background: #0a0a0f; background-image: radial-gradient(ellipse at top left, rgba(0,255,136,0.06) 0%, transparent 50%), radial-gradient(ellipse at bottom right, rgba(255,0,255,0.04) 0%, transparent 50%);">
+      <div class="hero-title">Saltology</div>
+      <div class="hero-sub">The study of the interesting</div>
+      <div class="card" style="background: rgba(255,255,255,0.03);">
+        <div class="card-title">Blog Post Title</div>
+        <div class="card-date">June 21, 2025</div>
+      </div>
+    </div>
+    <div class="label">
+      <div class="name">Current <span class="current-badge">Active</span></div>
+      <code>#0a0a0f</code> — dark indigo-black
+      <div class="desc">Slight blue/purple undertone. The green bleed is noticeable.</div>
+    </div>
+  </div>
+
+  <div class="option">
+    <div class="preview" style="background: #0d0d0d; background-image: radial-gradient(ellipse at top left, rgba(0,255,136,0.06) 0%, transparent 50%), radial-gradient(ellipse at bottom right, rgba(255,0,255,0.04) 0%, transparent 50%);">
+      <div class="hero-title">Saltology</div>
+      <div class="hero-sub">The study of the interesting</div>
+      <div class="card" style="background: rgba(255,255,255,0.03);">
+        <div class="card-title">Blog Post Title</div>
+        <div class="card-date">June 21, 2025</div>
+      </div>
+    </div>
+    <div class="label">
+      <div class="name">Neutral Black</div>
+      <code>#0d0d0d</code> — true neutral
+      <div class="desc">No color cast. Clean, minimal. Lets the neon accents pop more.</div>
+    </div>
+  </div>
+
+  <div class="option">
+    <div class="preview" style="background: #101014; background-image: radial-gradient(ellipse at top left, rgba(0,255,136,0.06) 0%, transparent 50%), radial-gradient(ellipse at bottom right, rgba(255,0,255,0.04) 0%, transparent 50%);">
+      <div class="hero-title">Saltology</div>
+      <div class="hero-sub">The study of the interesting</div>
+      <div class="card" style="background: rgba(255,255,255,0.03);">
+        <div class="card-title">Blog Post Title</div>
+        <div class="card-date">June 21, 2025</div>
+      </div>
+    </div>
+    <div class="label">
+      <div class="name">Dark Slate</div>
+      <code>#101014</code> — cool purple-grey
+      <div class="desc">Slightly lighter, subtle purple cast. Pairs well with magenta accents.</div>
+    </div>
+  </div>
+
+  <div class="option">
+    <div class="preview" style="background: #0c0c0c; background-image: radial-gradient(ellipse at top left, rgba(0,255,136,0.06) 0%, transparent 50%), radial-gradient(ellipse at bottom right, rgba(255,0,255,0.04) 0%, transparent 50%);">
+      <div class="hero-title">Saltology</div>
+      <div class="hero-sub">The study of the interesting</div>
+      <div class="card" style="background: rgba(255,255,255,0.03);">
+        <div class="card-title">Blog Post Title</div>
+        <div class="card-date">June 21, 2025</div>
+      </div>
+    </div>
+    <div class="label">
+      <div class="name">Charcoal</div>
+      <code>#0c0c0c</code> — warm neutral
+      <div class="desc">Very slightly warmer than pure black. Easy on the eyes.</div>
+    </div>
+  </div>
+
+  <div class="option">
+    <div class="preview" style="background: #0f0a10; background-image: radial-gradient(ellipse at top left, rgba(0,255,136,0.06) 0%, transparent 50%), radial-gradient(ellipse at bottom right, rgba(255,0,255,0.04) 0%, transparent 50%);">
+      <div class="hero-title">Saltology</div>
+      <div class="hero-sub">The study of the interesting</div>
+      <div class="card" style="background: rgba(255,255,255,0.03);">
+        <div class="card-title">Blog Post Title</div>
+        <div class="card-date">June 21, 2025</div>
+      </div>
+    </div>
+    <div class="label">
+      <div class="name">Deep Plum</div>
+      <code>#0f0a10</code> — purple-black
+      <div class="desc">Warm purple undertone. Ties into the magenta accent system.</div>
+    </div>
+  </div>
+
+  <div class="option">
+    <div class="preview" style="background: #111318; background-image: radial-gradient(ellipse at top left, rgba(0,255,136,0.06) 0%, transparent 50%), radial-gradient(ellipse at bottom right, rgba(255,0,255,0.04) 0%, transparent 50%);">
+      <div class="hero-title">Saltology</div>
+      <div class="hero-sub">The study of the interesting</div>
+      <div class="card" style="background: rgba(255,255,255,0.03);">
+        <div class="card-title">Blog Post Title</div>
+        <div class="card-date">June 21, 2025</div>
+      </div>
+    </div>
+    <div class="label">
+      <div class="name">Midnight Blue</div>
+      <code>#111318</code> — blue-tinted dark
+      <div class="desc">Noticeably lighter. Cool blue tone like VS Code's dark theme.</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

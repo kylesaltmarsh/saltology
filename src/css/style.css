@@ -99,11 +99,9 @@ body {
   color: var(--color-text);
   background-color: var(--color-bg);
   background-image:
-    radial-gradient(ellipse at top left, rgba(0, 255, 136, 0.06) 0%, transparent 50%),
-    radial-gradient(ellipse at bottom right, rgba(255, 0, 255, 0.04) 0%, transparent 50%),
-    linear-gradient(rgba(0, 255, 136, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 136, 0.03) 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 50px 50px, 50px 50px;
+    radial-gradient(ellipse at top left, rgba(0, 255, 136, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(255, 0, 255, 0.03) 0%, transparent 50%);
+  background-size: 100% 100%, 100% 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
