@@ -117,15 +117,13 @@ permalink: "/about/"
                                 letter-spacing: 1.5px; text-transform: uppercase;"></p>
                         </div>
 
-                        <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.183.0/build/three.module.js"}}</script>
-                        <script type="module">
-                        import * as THREE from 'three';
-
-                        (function() {
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+                        <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+                        <script>
+                        (async function() {
                             /* ── Config ── */
                             const SPHERE_RADIUS = 1.8;
-                            const DOT_COUNT = 2800;
-                            const DOT_SIZE = 0.022;
+                            const DOT_COUNT = 10000;
                             const MARKER_SIZE_BASE = 0.045;
                             const AUTO_ROTATE_SPEED = 0.09;
                             const CAMERA_POS = [0, 0, 5.5];
@@ -154,7 +152,52 @@ permalink: "/about/"
                                 { lng:-81.3,  lat: 19.3,  name: "Cayman Islands",  color: "#6366f1" },
                             ];
 
-                            /* ── Scene setup ── */
+                            /* ── Step 1: Load geographic land data ── */
+                            async function loadLandMask() {
+                                const resp = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/land-50m.json');
+                                const topoData = await resp.json();
+                                const land = topojson.feature(topoData, topoData.objects.land);
+                                const mapW = 4096, mapH = 2048;
+                                const offCanvas = document.createElement('canvas');
+                                offCanvas.width = mapW; offCanvas.height = mapH;
+                                const ctx = offCanvas.getContext('2d');
+                                ctx.fillStyle = '#000';
+                                ctx.fillRect(0, 0, mapW, mapH);
+                                ctx.fillStyle = '#fff';
+
+                                function projectCoord(lon, lat) {
+                                    return [((lon + 180) / 360) * mapW, ((90 - lat) / 180) * mapH];
+                                }
+                                function drawPolygon(coords) {
+                                    ctx.beginPath();
+                                    for (let i = 0; i < coords.length; i++) {
+                                        const [x, y] = projectCoord(coords[i][0], coords[i][1]);
+                                        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+                                    }
+                                    ctx.closePath();
+                                    ctx.fill();
+                                }
+                                function processGeometry(geom) {
+                                    if (geom.type === 'Polygon') geom.coordinates.forEach(ring => drawPolygon(ring));
+                                    else if (geom.type === 'MultiPolygon') geom.coordinates.forEach(poly => poly.forEach(ring => drawPolygon(ring)));
+                                    else if (geom.type === 'GeometryCollection') geom.geometries.forEach(g => processGeometry(g));
+                                }
+                                if (land.type === 'FeatureCollection') land.features.forEach(f => processGeometry(f.geometry));
+                                else if (land.geometry) processGeometry(land.geometry);
+                                else processGeometry(land);
+
+                                return { imageData: ctx.getImageData(0, 0, mapW, mapH), mapW, mapH };
+                            }
+
+                            function isLandFromImage(lat, lon, imageData, mapW, mapH) {
+                                const cx = Math.max(0, Math.min(mapW - 1, Math.floor(((lon + 180) / 360) * mapW)));
+                                const cy = Math.max(0, Math.min(mapH - 1, Math.floor(((90 - lat) / 180) * mapH)));
+                                return imageData.data[(cy * mapW + cx) * 4] > 128;
+                            }
+
+                            /* ── Step 2: Build the scene ── */
+                            const { imageData, mapW, mapH } = await loadLandMask();
+
                             const container = document.getElementById('globe-container');
                             const tooltip = document.getElementById('globe-tooltip');
                             const counterEl = document.getElementById('globe-counter');
@@ -172,49 +215,112 @@ permalink: "/about/"
                             renderer.domElement.style.height = '100%';
                             renderer.domElement.style.cursor = 'grab';
 
-                            // Lights (matching ausdata.ai)
-                            const ambient = new THREE.AmbientLight(0xffffff, 0.18);
-                            scene.add(ambient);
-                            const dirLight = new THREE.DirectionalLight(0xffffff, 2.2);
-                            dirLight.position.set(4, 6, 5);
-                            scene.add(dirLight);
-                            const fillLight = new THREE.DirectionalLight(0x8888ff, 0.25);
-                            fillLight.position.set(-3, -2, -3);
-                            scene.add(fillLight);
+                            // Lights
+                            scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+                            const keyLight = new THREE.DirectionalLight(0xffffff, 1.0);
+                            keyLight.position.set(4, 6, 5);
+                            scene.add(keyLight);
 
-                            /* ── Fibonacci dot sphere (background particles) ── */
-                            const dotGroup = new THREE.Group();
-                            scene.add(dotGroup);
+                            const globeGroup = new THREE.Group();
+                            scene.add(globeGroup);
 
-                            const positions = new Float32Array(3 * DOT_COUNT);
-                            const sizes = new Float32Array(DOT_COUNT);
+                            /* ── Occlusion sphere (hides back-facing dots) ── */
+                            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+                            const bgColor = isLight ? 0xfafafa : 0x0a0a0f;
+                            const occlusionMat = new THREE.MeshBasicMaterial({ color: bgColor });
+                            const occlusionSphere = new THREE.Mesh(
+                                new THREE.SphereGeometry(SPHERE_RADIUS - 0.02, 64, 64),
+                                occlusionMat
+                            );
+                            globeGroup.add(occlusionSphere);
+
+                            /* ── Atmosphere glow shader ── */
+                            const glowMat = new THREE.ShaderMaterial({
+                                uniforms: { uTime: { value: 0 } },
+                                vertexShader: `
+                                    varying vec3 vNormal; varying vec3 vWorldPos;
+                                    void main() {
+                                        vNormal = normalize(normalMatrix * normal);
+                                        vWorldPos = (modelMatrix * vec4(position,1.0)).xyz;
+                                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+                                    }`,
+                                fragmentShader: `
+                                    uniform float uTime; varying vec3 vNormal; varying vec3 vWorldPos;
+                                    void main() {
+                                        float intensity = pow(0.55 - dot(vNormal, vec3(0,0,1.0)), 3.5);
+                                        vec3 mint = vec3(0.0, 1.0, 0.533);
+                                        vec3 blue = vec3(0.0, 0.831, 1.0);
+                                        float blend = 0.5 + 0.5 * sin(atan(vWorldPos.y, vWorldPos.x) * 2.0 + uTime * 0.3);
+                                        vec3 col = mix(mint, blue, blend * 0.3);
+                                        gl_FragColor = vec4(col * intensity * 0.15, intensity * 0.25);
+                                    }`,
+                                side: THREE.BackSide, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false
+                            });
+                            scene.add(new THREE.Mesh(new THREE.SphereGeometry(SPHERE_RADIUS * 1.18, 64, 64), glowMat));
+
+                            /* ── Dot matrix with land/water classification ── */
+                            const dotMaterial = new THREE.ShaderMaterial({
+                                uniforms: { uTime: { value: 0 } },
+                                vertexShader: `
+                                    attribute float aIsLand; attribute float aRandom; uniform float uTime;
+                                    varying float vIsLand; varying float vAlpha;
+                                    void main() {
+                                        vIsLand = aIsLand;
+                                        float twinkle = sin(uTime*1.5 + aRandom*62.831)*0.15+0.85;
+                                        float waterPulse = sin(uTime*0.5 + aRandom*31.415)*0.1+0.9;
+                                        vAlpha = aIsLand > 0.5 ? twinkle * 0.25 : 0.0;
+                                        float scale = aIsLand > 0.5 ? 0.9 : 0.0;
+                                        vec4 mvPos = modelViewMatrix * vec4(position,1.0);
+                                        gl_PointSize = scale * (180.0 / -mvPos.z);
+                                        gl_Position = projectionMatrix * mvPos;
+                                    }`,
+                                fragmentShader: `
+                                    varying float vIsLand; varying float vAlpha;
+                                    void main() {
+                                        float dist = length(gl_PointCoord - vec2(0.5));
+                                        if (dist > 0.5) discard;
+                                        float edge = 1.0 - smoothstep(0.35, 0.5, dist);
+                                        vec3 landColor = vec3(0.0, 1.0, 0.533);
+                                        vec3 waterColor = vec3(0.071, 0.071, 0.133);
+                                        gl_FragColor = vec4(vIsLand > 0.5 ? landColor : waterColor, vAlpha * edge);
+                                    }`,
+                                transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
+                            });
+
+                            const positions = new Float32Array(DOT_COUNT * 3);
+                            const isLandAttr = new Float32Array(DOT_COUNT);
+                            const randomAttr = new Float32Array(DOT_COUNT);
                             const goldenAngle = Math.PI * (3 - Math.sqrt(5));
 
                             for (let i = 0; i < DOT_COUNT; i++) {
-                                const y = 1 - (i / (DOT_COUNT - 1)) * 2;
-                                const radiusAtY = Math.sqrt(1 - y * y);
-                                const theta = goldenAngle * i;
-                                positions[3 * i]     = Math.cos(theta) * radiusAtY * SPHERE_RADIUS;
-                                positions[3 * i + 1] = y * SPHERE_RADIUS;
-                                positions[3 * i + 2] = Math.sin(theta) * radiusAtY * SPHERE_RADIUS;
-                                sizes[i] = 0.012 + 0.018 * Math.random();
+                                const theta = 2 * Math.PI * i / ((1 + Math.sqrt(5)) / 2);
+                                const phi = Math.acos(1 - 2 * (i + 0.5) / DOT_COUNT);
+                                const x = -Math.cos(theta) * Math.sin(phi) * SPHERE_RADIUS;
+                                const y = Math.cos(phi) * SPHERE_RADIUS;
+                                const z = Math.sin(theta) * Math.sin(phi) * SPHERE_RADIUS;
+                                positions[i * 3] = x;
+                                positions[i * 3 + 1] = y;
+                                positions[i * 3 + 2] = z;
+                                // Derive lat/lon from actual 3D position to ensure land mask alignment
+                                const lat = Math.asin(y / SPHERE_RADIUS) * (180 / Math.PI);
+                                const lon = Math.atan2(-x, -z) * (180 / Math.PI);
+                                isLandAttr[i] = isLandFromImage(lat, lon, imageData, mapW, mapH) ? 1 : 0;
+                                randomAttr[i] = Math.random();
                             }
 
                             const dotGeo = new THREE.BufferGeometry();
                             dotGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-                            dotGeo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-                            const dotMat = new THREE.PointsMaterial({
-                                color: 0xffffff,
-                                size: DOT_SIZE,
-                                sizeAttenuation: true,
-                                transparent: true,
-                                opacity: 0.82,
-                                depthWrite: false,
-                            });
-                            const dotPoints = new THREE.Points(dotGeo, dotMat);
-                            dotGroup.add(dotPoints);
+                            dotGeo.setAttribute('aIsLand', new THREE.BufferAttribute(isLandAttr, 1));
+                            dotGeo.setAttribute('aRandom', new THREE.BufferAttribute(randomAttr, 1));
+                            globeGroup.add(new THREE.Points(dotGeo, dotMaterial));
 
-                            /* ── Rotation state (quaternion-based, matching ausdata.ai) ── */
+                            /* ── Graticule wireframe ── */
+                            globeGroup.add(new THREE.LineSegments(
+                                new THREE.WireframeGeometry(new THREE.SphereGeometry(SPHERE_RADIUS * 0.995, 36, 18)),
+                                new THREE.LineBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.03 })
+                            ));
+
+                            /* ── Rotation state (quaternion-based) ── */
                             const rotationQ = new THREE.Quaternion();
                             const identityQ = new THREE.Quaternion();
                             const yAxis = new THREE.Vector3(0, 1, 0);
@@ -236,7 +342,6 @@ permalink: "/about/"
                             /* ── Country markers as glowing orbs ── */
                             const markerGroup = new THREE.Group();
                             scene.add(markerGroup);
-
                             const markerMeshes = [];
                             const hitMeshes = [];
 
@@ -256,42 +361,41 @@ permalink: "/about/"
                                 const group = new THREE.Group();
                                 group.position.copy(pos);
 
-                                // Spoke line from center to orb
+                                // Spoke line
                                 const spokeGeo = new THREE.BufferGeometry();
                                 spokeGeo.setAttribute('position', new THREE.BufferAttribute(
                                     new Float32Array([pos.x, pos.y, pos.z, 0, 0, 0]), 3
                                 ));
-                                const spokeMat = new THREE.LineBasicMaterial({
-                                    color: color, transparent: true, opacity: 0.28
-                                });
-                                const spoke = new THREE.LineSegments(spokeGeo, spokeMat);
+                                const spoke = new THREE.LineSegments(spokeGeo,
+                                    new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.28 })
+                                );
                                 markerGroup.add(spoke);
 
-                                // Outer glow sphere
+                                // Outer glow
                                 const glowOuter = new THREE.Mesh(
                                     new THREE.SphereGeometry(2.8 * MARKER_SIZE_BASE, 16, 16),
-                                    new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: 0.055, depthWrite: false })
+                                    new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.055, depthWrite: false })
                                 );
                                 group.add(glowOuter);
 
-                                // Inner glow sphere
+                                // Inner glow
                                 const glowInner = new THREE.Mesh(
                                     new THREE.SphereGeometry(1.55 * MARKER_SIZE_BASE, 16, 16),
-                                    new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: 0.14, depthWrite: false })
+                                    new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.14, depthWrite: false })
                                 );
                                 group.add(glowInner);
 
                                 // Core orb
                                 const core = new THREE.Mesh(
-                                    new THREE.SphereGeometry(MARKER_SIZE_BASE, 48, 48),
+                                    new THREE.SphereGeometry(MARKER_SIZE_BASE, 32, 32),
                                     new THREE.MeshStandardMaterial({
-                                        color: color, roughness: 0.3, metalness: 0.55,
+                                        color, roughness: 0.3, metalness: 0.55,
                                         emissive: color, emissiveIntensity: 0.12,
                                     })
                                 );
                                 group.add(core);
 
-                                // Invisible hit target (for raycasting)
+                                // Hit target
                                 const hit = new THREE.Mesh(
                                     new THREE.SphereGeometry(Math.max(4 * MARKER_SIZE_BASE, 0.18), 8, 8),
                                     new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })
@@ -300,11 +404,11 @@ permalink: "/about/"
                                 group.add(hit);
 
                                 markerGroup.add(group);
-                                markerMeshes.push({ group, core, glowInner, glowOuter, spoke, data: m, targetScale: 1 });
+                                markerMeshes.push({ group, core, glowInner, glowOuter, spoke, data: m });
                                 hitMeshes.push(hit);
                             });
 
-                            /* ── Raycaster for hover detection ── */
+                            /* ── Raycaster ── */
                             const raycaster = new THREE.Raycaster();
                             const mouseNDC = new THREE.Vector2(-99, -99);
                             let hoveredIdx = null;
@@ -315,7 +419,7 @@ permalink: "/about/"
                                 mouseNDC.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
                             });
 
-                            /* ── Pointer drag interaction (quaternion trackball) ── */
+                            /* ── Pointer drag (quaternion trackball) ── */
                             let pointerStart = null;
 
                             renderer.domElement.addEventListener('pointerdown', e => {
@@ -323,9 +427,10 @@ permalink: "/about/"
                                 drag.deltaQ.identity();
                                 pointerStart = { x: e.clientX, y: e.clientY };
                                 const rect = renderer.domElement.getBoundingClientRect();
-                                const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-                                const ny = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-                                drag.lastVec.copy(trackballVec(nx, ny));
+                                drag.lastVec.copy(trackballVec(
+                                    ((e.clientX - rect.left) / rect.width) * 2 - 1,
+                                    -((e.clientY - rect.top) / rect.height) * 2 + 1
+                                ));
                                 renderer.domElement.setPointerCapture(e.pointerId);
                                 renderer.domElement.style.cursor = 'grabbing';
                             });
@@ -333,24 +438,17 @@ permalink: "/about/"
                             renderer.domElement.addEventListener('pointermove', e => {
                                 if (!drag.active) return;
                                 const rect = renderer.domElement.getBoundingClientRect();
-                                const nx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-                                const ny = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-                                const newVec = trackballVec(nx, ny);
+                                const newVec = trackballVec(
+                                    ((e.clientX - rect.left) / rect.width) * 2 - 1,
+                                    -((e.clientY - rect.top) / rect.height) * 2 + 1
+                                );
                                 drag.deltaQ.setFromUnitVectors(drag.lastVec, newVec);
                                 drag.lastVec.copy(newVec);
                             });
 
-                            renderer.domElement.addEventListener('pointerup', e => {
+                            renderer.domElement.addEventListener('pointerup', () => {
                                 drag.active = false;
                                 renderer.domElement.style.cursor = 'grab';
-                                // Check if it was a click (not a drag) on a marker
-                                if (pointerStart) {
-                                    const dx = e.clientX - pointerStart.x;
-                                    const dy = e.clientY - pointerStart.y;
-                                    if (Math.sqrt(dx*dx + dy*dy) < 6 && hoveredIdx !== null) {
-                                        // Could open link or do something on click
-                                    }
-                                }
                                 pointerStart = null;
                             });
 
@@ -359,10 +457,9 @@ permalink: "/about/"
                                 renderer.domElement.style.cursor = 'grab';
                             });
 
-                            /* ── Mouse velocity tracking (outside globe = nudge rotation) ── */
+                            /* ── Mouse velocity (outside globe nudges rotation) ── */
                             window.addEventListener('mousemove', e => {
                                 const rect = renderer.domElement.getBoundingClientRect();
-                                // Only track velocity when mouse is outside the canvas
                                 if (e.clientX >= rect.left && e.clientX <= rect.right &&
                                     e.clientY >= rect.top && e.clientY <= rect.bottom) {
                                     mouseVel.vx = 0; mouseVel.vy = 0; lastMouse = null;
@@ -370,10 +467,9 @@ permalink: "/about/"
                                     return;
                                 }
                                 const cx = rect.left + rect.width / 2;
-                                const cy = rect.top + rect.height / 2;
                                 const halfW = rect.width / 2;
                                 const sx = (e.clientX - cx) / halfW;
-                                const sy = -(e.clientY - cy) / halfW;
+                                const sy = -(e.clientY - (rect.top + rect.height / 2)) / halfW;
                                 if (lastMouse) {
                                     const dx = Math.max(-0.02, Math.min(0.02, sx - lastMouse.x));
                                     const dy = Math.max(-0.02, Math.min(0.02, sy - lastMouse.y));
@@ -385,7 +481,7 @@ permalink: "/about/"
                                 mouseDecayTimer = setTimeout(() => { mouseVel.vx = 0; mouseVel.vy = 0; lastMouse = null; }, 2000);
                             });
 
-                            /* ── Resize handling ── */
+                            /* ── Resize ── */
                             function resize() {
                                 const w = container.clientWidth;
                                 const h = container.clientHeight || w;
@@ -396,34 +492,13 @@ permalink: "/about/"
                             resize();
                             window.addEventListener('resize', resize);
 
-                            /* ── Atmosphere glow (CSS overlay, matching ausdata.ai) ── */
-                            const glowDiv = document.createElement('div');
-                            glowDiv.setAttribute('aria-hidden', 'true');
-                            glowDiv.style.cssText = `position:absolute;inset:0;border-radius:50%;pointer-events:none;
-                                background:radial-gradient(ellipse at 50% 50%, rgba(34,211,238,0.08) 0%, transparent 70%);`;
-                            container.appendChild(glowDiv);
-
-
-
                             /* ── Counter ── */
                             counterEl.textContent = markers.length + ' countries visited';
 
                             /* ── Theme handling ── */
                             function updateTheme() {
-                                const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-                                dotMat.color.set(isLight ? 0x111111 : 0xffffff);
-                                dotMat.opacity = isLight ? 0.75 : 0.82;
-                                ambient.intensity = isLight ? 0.35 : 0.18;
-                                dirLight.intensity = isLight ? 1.8 : 2.2;
-                                glowDiv.style.background = isLight
-                                    ? 'radial-gradient(ellipse at 50% 50%, rgba(99,102,241,0.07) 0%, transparent 70%)'
-                                    : 'radial-gradient(ellipse at 50% 50%, rgba(34,211,238,0.08) 0%, transparent 70%)';
-
-                                markerMeshes.forEach(m => {
-                                    m.glowInner.material.opacity = isLight ? 0.1 : 0.14;
-                                    m.glowOuter.material.opacity = isLight ? 0.04 : 0.055;
-                                    m.spoke.material.opacity = isLight ? 0.22 : 0.28;
-                                });
+                                const light = document.documentElement.getAttribute('data-theme') === 'light';
+                                occlusionMat.color.set(light ? 0xfafafa : 0x0a0a0f);
                             }
                             new MutationObserver(updateTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
@@ -436,15 +511,16 @@ permalink: "/about/"
                                 const dt = clock.getDelta();
                                 elapsedTime += dt;
 
-                                /* Rotation update (matching ausdata.ai quaternion logic) */
+                                dotMaterial.uniforms.uTime.value = elapsedTime;
+                                glowMat.uniforms.uTime.value = elapsedTime;
+
+                                /* Rotation */
                                 if (drag.active) {
                                     rotationQ.premultiply(drag.deltaQ);
                                 } else {
-                                    // Decay drag delta
                                     drag.deltaQ.slerp(identityQ, 0.08);
                                     rotationQ.premultiply(drag.deltaQ);
 
-                                    // Mouse velocity nudge
                                     if (Math.abs(mouseVel.vx) > 1e-4 || Math.abs(mouseVel.vy) > 1e-4) {
                                         tempQ.setFromAxisAngle(yAxis, 1.8 * mouseVel.vx);
                                         rotationQ.premultiply(tempQ);
@@ -452,26 +528,19 @@ permalink: "/about/"
                                         rotationQ.premultiply(tempQ);
                                     }
 
-                                    // Auto-rotate
                                     tempQ.setFromAxisAngle(yAxis, AUTO_ROTATE_SPEED * dt);
                                     rotationQ.premultiply(tempQ);
 
-                                    // Gentle pitch correction (same as ausdata.ai)
                                     euler.setFromQuaternion(rotationQ, 'YXZ');
                                     const pitchCorrect = (0.18 * Math.sin(0.12 * elapsedTime) - euler.x) * 0.02;
                                     tempQ.setFromAxisAngle(xAxis, pitchCorrect);
                                     rotationQ.premultiply(tempQ);
                                 }
                                 rotationQ.normalize();
-                                dotGroup.quaternion.copy(rotationQ);
+                                globeGroup.quaternion.copy(rotationQ);
                                 markerGroup.quaternion.copy(rotationQ);
 
-                                /* Camera drift (subtle mouse follow) */
-                                camera.position.x += (0.5 * mouseNDC.x - camera.position.x) * 0.04;
-                                camera.position.y += (0.2 * mouseNDC.y - camera.position.y) * 0.04;
-                                camera.lookAt(0, 0, 0);
-
-                                /* Raycast for marker hover */
+                                /* Raycast markers */
                                 raycaster.setFromCamera(mouseNDC, camera);
                                 const visible = hitMeshes.map(h => { h.visible = true; return h; });
                                 const hits = raycaster.intersectObjects(visible);
@@ -503,11 +572,10 @@ permalink: "/about/"
 
                                 renderer.domElement.style.cursor = hoveredIdx !== null ? 'pointer' : (drag.active ? 'grabbing' : 'grab');
 
-                                /* Marker hover scale animation */
+                                /* Marker hover scale */
                                 markerMeshes.forEach((m, i) => {
                                     const target = (i === hoveredIdx) ? 1.8 : 1;
-                                    const current = m.core.scale.x;
-                                    const s = current + (target - current) * 0.15;
+                                    const s = m.core.scale.x + (target - m.core.scale.x) * 0.15;
                                     m.core.scale.setScalar(s);
                                     m.glowInner.scale.setScalar(s);
                                 });
