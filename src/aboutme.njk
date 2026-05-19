@@ -126,6 +126,14 @@ permalink: "/about/"
                             const MARKER_SIZE = 2.0;
                             const AUTO_ROTATE_SPEED = 0.09;
                             const LAND_COLOR = 0x00ff88;
+                            const VISITED_COLOR = 0xff00ff;
+
+                            /* ISO 3166-1 numeric codes for visited countries */
+                            const VISITED_IDS = new Set([
+                                '036','040','124','156','250','276','300','360',
+                                '380','392','458','528','554','620','710','756',
+                                '826','840','704','136'
+                            ]);
 
                             const markers = [
                                 { lng: 133.7, lat: -25.3, name: "Australia" },
@@ -150,18 +158,17 @@ permalink: "/about/"
                                 { lng:-81.3,  lat: 19.3,  name: "Cayman Islands" },
                             ];
 
-                            /* ── Load geographic land data ── */
+                            /* ── Load geographic data with visited country classification ── */
                             async function loadLandMask() {
-                                const resp = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/land-50m.json');
+                                const resp = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json');
                                 const topoData = await resp.json();
-                                const land = topojson.feature(topoData, topoData.objects.land);
+                                const countries = topojson.feature(topoData, topoData.objects.countries);
                                 const mapW = 4096, mapH = 2048;
                                 const offCanvas = document.createElement('canvas');
                                 offCanvas.width = mapW; offCanvas.height = mapH;
                                 const ctx = offCanvas.getContext('2d');
                                 ctx.fillStyle = '#000';
                                 ctx.fillRect(0, 0, mapW, mapH);
-                                ctx.fillStyle = '#fff';
                                 function projectCoord(lon, lat) {
                                     return [((lon + 180) / 360) * mapW, ((90 - lat) / 180) * mapH];
                                 }
@@ -179,16 +186,31 @@ permalink: "/about/"
                                     else if (geom.type === 'MultiPolygon') geom.coordinates.forEach(poly => poly.forEach(ring => drawPolygon(ring)));
                                     else if (geom.type === 'GeometryCollection') geom.geometries.forEach(g => processGeometry(g));
                                 }
-                                if (land.type === 'FeatureCollection') land.features.forEach(f => processGeometry(f.geometry));
-                                else if (land.geometry) processGeometry(land.geometry);
-                                else processGeometry(land);
+                                /* Draw unvisited countries in green channel */
+                                countries.features.forEach(f => {
+                                    if (!VISITED_IDS.has(f.id)) {
+                                        ctx.fillStyle = '#00ff00';
+                                        processGeometry(f.geometry);
+                                    }
+                                });
+                                /* Draw visited countries in red channel (on top) */
+                                countries.features.forEach(f => {
+                                    if (VISITED_IDS.has(f.id)) {
+                                        ctx.fillStyle = '#ff0000';
+                                        processGeometry(f.geometry);
+                                    }
+                                });
                                 return { imageData: ctx.getImageData(0, 0, mapW, mapH), mapW, mapH };
                             }
 
-                            function isLandFromImage(lat, lon, imageData, mapW, mapH) {
+                            /* Returns: 0 = water, 1 = unvisited land, 2 = visited land */
+                            function classifyPoint(lat, lon, imageData, mapW, mapH) {
                                 const cx = Math.max(0, Math.min(mapW - 1, Math.floor(((lon + 180) / 360) * mapW)));
                                 const cy = Math.max(0, Math.min(mapH - 1, Math.floor(((90 - lat) / 180) * mapH)));
-                                return imageData.data[(cy * mapW + cx) * 4] > 128;
+                                const idx = (cy * mapW + cx) * 4;
+                                if (imageData.data[idx] > 128) return 2;     /* red = visited */
+                                if (imageData.data[idx + 1] > 128) return 1; /* green = unvisited land */
+                                return 0;                                     /* water */
                             }
 
                             /* ── Build the scene ── */
@@ -262,33 +284,38 @@ permalink: "/about/"
                             const dotMaterial = new THREE.ShaderMaterial({
                                 uniforms: { uTime: { value: 0 } },
                                 vertexShader: `
-                                    attribute float aIsLand; attribute float aRandom; uniform float uTime;
-                                    varying float vIsLand; varying float vAlpha;
+                                    attribute float aLandType; attribute float aRandom; uniform float uTime;
+                                    varying float vLandType; varying float vAlpha;
                                     void main() {
-                                        vIsLand = aIsLand;
+                                        vLandType = aLandType;
                                         float twinkle = sin(uTime*1.5 + aRandom*62.831)*0.15+0.85;
                                         float waterPulse = sin(uTime*0.5 + aRandom*31.415)*0.1+0.9;
-                                        vAlpha = aIsLand > 0.5 ? twinkle : waterPulse * 0.45;
-                                        float scale = aIsLand > 0.5 ? 1.6 : 0.6;
+                                        float visitedPulse = sin(uTime*2.0 + aRandom*62.831)*0.1+0.9;
+                                        float scale;
+                                        if (aLandType > 1.5) { vAlpha = visitedPulse; scale = 1.8; }
+                                        else if (aLandType > 0.5) { vAlpha = twinkle; scale = 1.6; }
+                                        else { vAlpha = waterPulse * 0.45; scale = 0.6; }
                                         vec4 mvPos = modelViewMatrix * vec4(position,1.0);
                                         gl_PointSize = scale * (300.0 / -mvPos.z);
                                         gl_Position = projectionMatrix * mvPos;
                                     }`,
                                 fragmentShader: `
-                                    varying float vIsLand; varying float vAlpha;
+                                    varying float vLandType; varying float vAlpha;
                                     void main() {
                                         float dist = length(gl_PointCoord - vec2(0.5));
                                         if (dist > 0.5) discard;
                                         float edge = 1.0 - smoothstep(0.35, 0.5, dist);
+                                        vec3 visitedColor = vec3(1.0, 0.0, 1.0);
                                         vec3 landColor = vec3(0.0, 1.0, 0.533);
                                         vec3 waterColor = vec3(0.071, 0.071, 0.133);
-                                        gl_FragColor = vec4(vIsLand > 0.5 ? landColor : waterColor, vAlpha * edge);
+                                        vec3 col = vLandType > 1.5 ? visitedColor : (vLandType > 0.5 ? landColor : waterColor);
+                                        gl_FragColor = vec4(col, vAlpha * edge);
                                     }`,
                                 transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
                             });
 
                             const positions = new Float32Array(DOT_COUNT * 3);
-                            const isLandAttr = new Float32Array(DOT_COUNT);
+                            const landTypeAttr = new Float32Array(DOT_COUNT);
                             const randomAttr = new Float32Array(DOT_COUNT);
                             const phi_ratio = (1 + Math.sqrt(5)) / 2;
 
@@ -302,13 +329,13 @@ permalink: "/about/"
                                 const y = Math.cos(phi) * GLOBE_RADIUS;
                                 const z = Math.sin(theta) * Math.sin(phi) * GLOBE_RADIUS;
                                 positions[i * 3] = x; positions[i * 3 + 1] = y; positions[i * 3 + 2] = z;
-                                isLandAttr[i] = isLandFromImage(lat, lon, imageData, mapW, mapH) ? 1 : 0;
+                                landTypeAttr[i] = classifyPoint(lat, lon, imageData, mapW, mapH);
                                 randomAttr[i] = Math.random();
                             }
 
                             const dotGeo = new THREE.BufferGeometry();
                             dotGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-                            dotGeo.setAttribute('aIsLand', new THREE.BufferAttribute(isLandAttr, 1));
+                            dotGeo.setAttribute('aLandType', new THREE.BufferAttribute(landTypeAttr, 1));
                             dotGeo.setAttribute('aRandom', new THREE.BufferAttribute(randomAttr, 1));
                             globeGroup.add(new THREE.Points(dotGeo, dotMaterial));
 
@@ -334,7 +361,7 @@ permalink: "/about/"
                                 );
                             }
 
-                            const mColor = new THREE.Color(LAND_COLOR);
+                            const mColor = new THREE.Color(VISITED_COLOR);
                             markers.forEach((m) => {
                                 const pos = latLngToVec3(m.lat, m.lng, GLOBE_RADIUS);
                                 const group = new THREE.Group();
