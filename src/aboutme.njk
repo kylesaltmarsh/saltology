@@ -217,7 +217,7 @@ permalink: "/about/"
                             const tooltip = document.getElementById('globe-tooltip');
 
                             const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-                            const BG = isLight ? 0xfafafa : 0x050507;
+                            const BG = isLight ? 0xd5d8e0 : 0x050507;
 
                             const scene = new THREE.Scene();
 
@@ -281,6 +281,7 @@ permalink: "/about/"
                             const dotMaterial = new THREE.ShaderMaterial({
                                 uniforms: {
                                     uTime: { value: 0 },
+                                    uAlphaBoost: { value: 1.0 },
                                     uVisitedColor: { value: new THREE.Color(1.0, 0.0, 1.0) },
                                     uLandColor: { value: new THREE.Color(0.0, 1.0, 0.533) },
                                     uWaterColor: { value: new THREE.Color(0.071, 0.071, 0.133) },
@@ -303,13 +304,14 @@ permalink: "/about/"
                                     }`,
                                 fragmentShader: `
                                     uniform vec3 uVisitedColor; uniform vec3 uLandColor; uniform vec3 uWaterColor;
+                                    uniform float uAlphaBoost;
                                     varying float vLandType; varying float vAlpha;
                                     void main() {
                                         float dist = length(gl_PointCoord - vec2(0.5));
                                         if (dist > 0.5) discard;
                                         float edge = 1.0 - smoothstep(0.35, 0.5, dist);
                                         vec3 col = vLandType > 1.5 ? uVisitedColor : (vLandType > 0.5 ? uLandColor : uWaterColor);
-                                        gl_FragColor = vec4(col, vAlpha * edge);
+                                        gl_FragColor = vec4(col, min(vAlpha * edge * uAlphaBoost, 1.0));
                                     }`,
                                 transparent: true, depthWrite: false,
                                 blending: THREE.NormalBlending
@@ -480,13 +482,14 @@ permalink: "/about/"
                             /* ── Theme ── */
                             function updateTheme() {
                                 const light = document.documentElement.getAttribute('data-theme') === 'light';
-                                const bg = light ? 0xfafafa : 0x050507;
+                                const bg = light ? 0xd5d8e0 : 0x050507;
                                 occlusionMat.color.set(bg);
                                 /* Swap dot colors and blending for light/dark */
+                                dotMaterial.uniforms.uAlphaBoost.value = light ? 2.0 : 1.0;
                                 if (light) {
-                                    dotMaterial.uniforms.uVisitedColor.value.setRGB(0.7, 0.0, 0.7);
-                                    dotMaterial.uniforms.uLandColor.value.setRGB(0.0, 0.5, 0.35);
-                                    dotMaterial.uniforms.uWaterColor.value.setRGB(0.82, 0.82, 0.85);
+                                    dotMaterial.uniforms.uVisitedColor.value.setRGB(0.55, 0.0, 0.55);
+                                    dotMaterial.uniforms.uLandColor.value.setRGB(0.0, 0.3, 0.2);
+                                    dotMaterial.uniforms.uWaterColor.value.setRGB(0.72, 0.73, 0.78);
                                 } else {
                                     dotMaterial.uniforms.uVisitedColor.value.setRGB(1.0, 0.0, 1.0);
                                     dotMaterial.uniforms.uLandColor.value.setRGB(0.0, 1.0, 0.533);
@@ -495,6 +498,7 @@ permalink: "/about/"
                                 glowMat.uniforms.uIntensity.value = light ? 0.0 : 1.0;
                                 graticuleMat.color.set(light ? 0x00805a : 0x00ff88);
                             }
+                            updateTheme();
                             new MutationObserver(updateTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
                             /* ── Animation loop ── */
