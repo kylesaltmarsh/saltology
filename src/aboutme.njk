@@ -112,9 +112,6 @@ permalink: "/about/"
                                 backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
                                 color: #e0e0e0; transition: opacity 150ms ease; white-space: nowrap;
                                 transform: translate(-50%, -130%);"></div>
-                            <p id="globe-counter" style="position: absolute; bottom: -2rem; left: 0; right: 0; text-align: center;
-                                color: var(--color-text-muted); font-size: 11px; font-family: var(--font-mono, monospace);
-                                letter-spacing: 1.5px; text-transform: uppercase;"></p>
                         </div>
 
                         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -218,7 +215,6 @@ permalink: "/about/"
 
                             const container = document.getElementById('globe-container');
                             const tooltip = document.getElementById('globe-tooltip');
-                            const counterEl = document.getElementById('globe-counter');
 
                             const isLight = document.documentElement.getAttribute('data-theme') === 'light';
                             const BG = isLight ? 0xfafafa : 0x050507;
@@ -322,13 +318,14 @@ permalink: "/about/"
                             for (let i = 0; i < DOT_COUNT; i++) {
                                 const theta = 2 * Math.PI * i / phi_ratio;
                                 const phi = Math.acos(1 - 2 * (i + 0.5) / DOT_COUNT);
-                                const lat = 90 - (phi * 180 / Math.PI);
-                                let lon = (theta * 180 / Math.PI) % 360;
-                                if (lon > 180) lon -= 360;
                                 const x = -Math.cos(theta) * Math.sin(phi) * GLOBE_RADIUS;
                                 const y = Math.cos(phi) * GLOBE_RADIUS;
                                 const z = Math.sin(theta) * Math.sin(phi) * GLOBE_RADIUS;
                                 positions[i * 3] = x; positions[i * 3 + 1] = y; positions[i * 3 + 2] = z;
+                                /* Derive lat/lon from xyz to match latLngToVec3 convention */
+                                const lat = Math.asin(y / GLOBE_RADIUS) * (180 / Math.PI);
+                                let lon = Math.atan2(z, -x) * (180 / Math.PI) - 180;
+                                if (lon < -180) lon += 360;
                                 landTypeAttr[i] = classifyPoint(lat, lon, imageData, mapW, mapH);
                                 randomAttr[i] = Math.random();
                             }
@@ -470,7 +467,7 @@ permalink: "/about/"
                             resize();
                             window.addEventListener('resize', resize);
 
-                            counterEl.textContent = markers.length + ' countries visited';
+
 
                             /* ── Theme ── */
                             function updateTheme() {
