@@ -121,38 +121,36 @@ permalink: "/about/"
                         <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
                         <script>
                         (async function() {
-                            /* ── Config ── */
-                            const SPHERE_RADIUS = 1.8;
-                            const DOT_COUNT = 10000;
-                            const MARKER_SIZE_BASE = 0.045;
+                            const GLOBE_RADIUS = 90;
+                            const DOT_COUNT = 70000;
+                            const MARKER_SIZE = 2.0;
                             const AUTO_ROTATE_SPEED = 0.09;
-                            const CAMERA_POS = [0, 0, 5.5];
-                            const CAMERA_FOV = 45;
+                            const LAND_COLOR = 0x00ff88;
 
                             const markers = [
-                                { lng: 133.7, lat: -25.3, name: "Australia",       color: "#00ff88" },
-                                { lng: 14.6,  lat: 47.5,  name: "Austria",         color: "#22d3ee" },
-                                { lng:-106.3, lat: 56.1,  name: "Canada",          color: "#f59e0b" },
-                                { lng: 104.2, lat: 35.9,  name: "China",           color: "#ff00ff" },
-                                { lng: 2.2,   lat: 46.6,  name: "France",          color: "#6366f1" },
-                                { lng: 10.5,  lat: 51.2,  name: "Germany",         color: "#00ff88" },
-                                { lng: 21.8,  lat: 39.1,  name: "Greece",          color: "#22d3ee" },
-                                { lng: 113.9, lat: -0.8,  name: "Indonesia",       color: "#f59e0b" },
-                                { lng: 12.6,  lat: 41.9,  name: "Italy",           color: "#ff00ff" },
-                                { lng: 138.3, lat: 36.2,  name: "Japan",           color: "#6366f1" },
-                                { lng: 101.7, lat: 4.2,   name: "Malaysia",        color: "#00ff88" },
-                                { lng: 5.3,   lat: 52.1,  name: "Netherlands",     color: "#22d3ee" },
-                                { lng: 174.9, lat:-40.9,  name: "New Zealand",     color: "#f59e0b" },
-                                { lng: -8.2,  lat: 39.4,  name: "Portugal",        color: "#ff00ff" },
-                                { lng: 24.7,  lat:-28.5,  name: "South Africa",    color: "#6366f1" },
-                                { lng: 8.2,   lat: 46.8,  name: "Switzerland",     color: "#00ff88" },
-                                { lng: -3.4,  lat: 55.4,  name: "United Kingdom",  color: "#22d3ee" },
-                                { lng:-95.7,  lat: 37.1,  name: "United States",   color: "#f59e0b" },
-                                { lng: 108.3, lat: 14.1,  name: "Vietnam",         color: "#ff00ff" },
-                                { lng:-81.3,  lat: 19.3,  name: "Cayman Islands",  color: "#6366f1" },
+                                { lng: 133.7, lat: -25.3, name: "Australia" },
+                                { lng: 14.6,  lat: 47.5,  name: "Austria" },
+                                { lng:-106.3, lat: 56.1,  name: "Canada" },
+                                { lng: 104.2, lat: 35.9,  name: "China" },
+                                { lng: 2.2,   lat: 46.6,  name: "France" },
+                                { lng: 10.5,  lat: 51.2,  name: "Germany" },
+                                { lng: 21.8,  lat: 39.1,  name: "Greece" },
+                                { lng: 113.9, lat: -0.8,  name: "Indonesia" },
+                                { lng: 12.6,  lat: 41.9,  name: "Italy" },
+                                { lng: 138.3, lat: 36.2,  name: "Japan" },
+                                { lng: 101.7, lat: 4.2,   name: "Malaysia" },
+                                { lng: 5.3,   lat: 52.1,  name: "Netherlands" },
+                                { lng: 174.9, lat:-40.9,  name: "New Zealand" },
+                                { lng: -8.2,  lat: 39.4,  name: "Portugal" },
+                                { lng: 24.7,  lat:-28.5,  name: "South Africa" },
+                                { lng: 8.2,   lat: 46.8,  name: "Switzerland" },
+                                { lng: -3.4,  lat: 55.4,  name: "United Kingdom" },
+                                { lng:-95.7,  lat: 37.1,  name: "United States" },
+                                { lng: 108.3, lat: 14.1,  name: "Vietnam" },
+                                { lng:-81.3,  lat: 19.3,  name: "Cayman Islands" },
                             ];
 
-                            /* ── Step 1: Load geographic land data ── */
+                            /* ── Load geographic land data ── */
                             async function loadLandMask() {
                                 const resp = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/land-50m.json');
                                 const topoData = await resp.json();
@@ -164,7 +162,6 @@ permalink: "/about/"
                                 ctx.fillStyle = '#000';
                                 ctx.fillRect(0, 0, mapW, mapH);
                                 ctx.fillStyle = '#fff';
-
                                 function projectCoord(lon, lat) {
                                     return [((lon + 180) / 360) * mapW, ((90 - lat) / 180) * mapH];
                                 }
@@ -185,7 +182,6 @@ permalink: "/about/"
                                 if (land.type === 'FeatureCollection') land.features.forEach(f => processGeometry(f.geometry));
                                 else if (land.geometry) processGeometry(land.geometry);
                                 else processGeometry(land);
-
                                 return { imageData: ctx.getImageData(0, 0, mapW, mapH), mapW, mapH };
                             }
 
@@ -195,19 +191,33 @@ permalink: "/about/"
                                 return imageData.data[(cy * mapW + cx) * 4] > 128;
                             }
 
-                            /* ── Step 2: Build the scene ── */
+                            /* ── Build the scene ── */
                             const { imageData, mapW, mapH } = await loadLandMask();
 
                             const container = document.getElementById('globe-container');
                             const tooltip = document.getElementById('globe-tooltip');
                             const counterEl = document.getElementById('globe-counter');
 
-                            const scene = new THREE.Scene();
-                            const camera = new THREE.PerspectiveCamera(CAMERA_FOV, 1, 0.1, 100);
-                            camera.position.set(...CAMERA_POS);
+                            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+                            const BG = isLight ? 0xfafafa : 0x050507;
 
-                            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                            const scene = new THREE.Scene();
+
+                            const camera = new THREE.PerspectiveCamera(45, 1, 1, 1000);
+                            camera.position.set(0, 20, 310);
+
+                            scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+                            const keyLight = new THREE.DirectionalLight(0xffffff, 1.0);
+                            keyLight.position.set(80, 50, 80);
+                            scene.add(keyLight);
+                            const rimLight = new THREE.SpotLight(LAND_COLOR, 2.5);
+                            rimLight.position.set(-100, 50, -50);
+                            rimLight.lookAt(0, 0, 0);
+                            scene.add(rimLight);
+
+                            const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
                             renderer.setClearColor(0x000000, 0);
+                            renderer.setSize(container.clientWidth, container.clientHeight || container.clientWidth);
                             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
                             container.insertBefore(renderer.domElement, container.firstChild);
                             renderer.domElement.style.display = 'block';
@@ -215,26 +225,16 @@ permalink: "/about/"
                             renderer.domElement.style.height = '100%';
                             renderer.domElement.style.cursor = 'grab';
 
-                            // Lights
-                            scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-                            const keyLight = new THREE.DirectionalLight(0xffffff, 1.0);
-                            keyLight.position.set(4, 6, 5);
-                            scene.add(keyLight);
-
                             const globeGroup = new THREE.Group();
                             scene.add(globeGroup);
 
-                            /* ── Occlusion sphere (hides back-facing dots) ── */
-                            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-                            const bgColor = isLight ? 0xfafafa : 0x0a0a0f;
-                            const occlusionMat = new THREE.MeshBasicMaterial({ color: bgColor });
-                            const occlusionSphere = new THREE.Mesh(
-                                new THREE.SphereGeometry(SPHERE_RADIUS - 0.02, 64, 64),
-                                occlusionMat
-                            );
-                            globeGroup.add(occlusionSphere);
+                            /* ── Occlusion sphere ── */
+                            const occlusionMat = new THREE.MeshBasicMaterial({ color: BG });
+                            globeGroup.add(new THREE.Mesh(
+                                new THREE.SphereGeometry(GLOBE_RADIUS - 0.5, 64, 64), occlusionMat
+                            ));
 
-                            /* ── Atmosphere glow shader ── */
+                            /* ── Atmosphere glow ── */
                             const glowMat = new THREE.ShaderMaterial({
                                 uniforms: { uTime: { value: 0 } },
                                 vertexShader: `
@@ -252,13 +252,13 @@ permalink: "/about/"
                                         vec3 blue = vec3(0.0, 0.831, 1.0);
                                         float blend = 0.5 + 0.5 * sin(atan(vWorldPos.y, vWorldPos.x) * 2.0 + uTime * 0.3);
                                         vec3 col = mix(mint, blue, blend * 0.3);
-                                        gl_FragColor = vec4(col * intensity * 0.15, intensity * 0.25);
+                                        gl_FragColor = vec4(col * intensity * 0.45, intensity * 0.6);
                                     }`,
                                 side: THREE.BackSide, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false
                             });
-                            scene.add(new THREE.Mesh(new THREE.SphereGeometry(SPHERE_RADIUS * 1.18, 64, 64), glowMat));
+                            scene.add(new THREE.Mesh(new THREE.SphereGeometry(GLOBE_RADIUS * 1.18, 64, 64), glowMat));
 
-                            /* ── Dot matrix with land/water classification ── */
+                            /* ── Dot matrix ── */
                             const dotMaterial = new THREE.ShaderMaterial({
                                 uniforms: { uTime: { value: 0 } },
                                 vertexShader: `
@@ -268,10 +268,10 @@ permalink: "/about/"
                                         vIsLand = aIsLand;
                                         float twinkle = sin(uTime*1.5 + aRandom*62.831)*0.15+0.85;
                                         float waterPulse = sin(uTime*0.5 + aRandom*31.415)*0.1+0.9;
-                                        vAlpha = aIsLand > 0.5 ? twinkle * 0.25 : 0.0;
-                                        float scale = aIsLand > 0.5 ? 0.9 : 0.0;
+                                        vAlpha = aIsLand > 0.5 ? twinkle : waterPulse * 0.45;
+                                        float scale = aIsLand > 0.5 ? 1.6 : 0.6;
                                         vec4 mvPos = modelViewMatrix * vec4(position,1.0);
-                                        gl_PointSize = scale * (180.0 / -mvPos.z);
+                                        gl_PointSize = scale * (300.0 / -mvPos.z);
                                         gl_Position = projectionMatrix * mvPos;
                                     }`,
                                 fragmentShader: `
@@ -290,20 +290,18 @@ permalink: "/about/"
                             const positions = new Float32Array(DOT_COUNT * 3);
                             const isLandAttr = new Float32Array(DOT_COUNT);
                             const randomAttr = new Float32Array(DOT_COUNT);
-                            const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+                            const phi_ratio = (1 + Math.sqrt(5)) / 2;
 
                             for (let i = 0; i < DOT_COUNT; i++) {
-                                const theta = 2 * Math.PI * i / ((1 + Math.sqrt(5)) / 2);
+                                const theta = 2 * Math.PI * i / phi_ratio;
                                 const phi = Math.acos(1 - 2 * (i + 0.5) / DOT_COUNT);
-                                const x = -Math.cos(theta) * Math.sin(phi) * SPHERE_RADIUS;
-                                const y = Math.cos(phi) * SPHERE_RADIUS;
-                                const z = Math.sin(theta) * Math.sin(phi) * SPHERE_RADIUS;
-                                positions[i * 3] = x;
-                                positions[i * 3 + 1] = y;
-                                positions[i * 3 + 2] = z;
-                                // Derive lat/lon from actual 3D position to ensure land mask alignment
-                                const lat = Math.asin(y / SPHERE_RADIUS) * (180 / Math.PI);
-                                const lon = Math.atan2(-x, -z) * (180 / Math.PI);
+                                const lat = 90 - (phi * 180 / Math.PI);
+                                let lon = (theta * 180 / Math.PI) % 360;
+                                if (lon > 180) lon -= 360;
+                                const x = -Math.cos(theta) * Math.sin(phi) * GLOBE_RADIUS;
+                                const y = Math.cos(phi) * GLOBE_RADIUS;
+                                const z = Math.sin(theta) * Math.sin(phi) * GLOBE_RADIUS;
+                                positions[i * 3] = x; positions[i * 3 + 1] = y; positions[i * 3 + 2] = z;
                                 isLandAttr[i] = isLandFromImage(lat, lon, imageData, mapW, mapH) ? 1 : 0;
                                 randomAttr[i] = Math.random();
                             }
@@ -314,32 +312,13 @@ permalink: "/about/"
                             dotGeo.setAttribute('aRandom', new THREE.BufferAttribute(randomAttr, 1));
                             globeGroup.add(new THREE.Points(dotGeo, dotMaterial));
 
-                            /* ── Graticule wireframe ── */
+                            /* ── Graticule ── */
                             globeGroup.add(new THREE.LineSegments(
-                                new THREE.WireframeGeometry(new THREE.SphereGeometry(SPHERE_RADIUS * 0.995, 36, 18)),
-                                new THREE.LineBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.03 })
+                                new THREE.WireframeGeometry(new THREE.SphereGeometry(GLOBE_RADIUS * 0.995, 36, 18)),
+                                new THREE.LineBasicMaterial({ color: LAND_COLOR, transparent: true, opacity: 0.03 })
                             ));
 
-                            /* ── Rotation state (quaternion-based) ── */
-                            const rotationQ = new THREE.Quaternion();
-                            const identityQ = new THREE.Quaternion();
-                            const yAxis = new THREE.Vector3(0, 1, 0);
-                            const xAxis = new THREE.Vector3(1, 0, 0);
-                            const tempQ = new THREE.Quaternion();
-
-                            const drag = { active: false, deltaQ: new THREE.Quaternion(), lastVec: new THREE.Vector3() };
-                            const mouseVel = { vx: 0, vy: 0 };
-                            let lastMouse = null;
-                            let mouseDecayTimer = null;
-                            let elapsedTime = 0;
-
-                            function trackballVec(x, y) {
-                                const r = Math.sqrt(x * x + y * y);
-                                const z = r < 0.8 ? Math.sqrt(0.8 * 0.8 - r * r) : (0.8 * 0.8) / (2 * r);
-                                return new THREE.Vector3(x, y, z).normalize();
-                            }
-
-                            /* ── Country markers as glowing orbs ── */
+                            /* ── Country markers ── */
                             const markerGroup = new THREE.Group();
                             scene.add(markerGroup);
                             const markerMeshes = [];
@@ -355,77 +334,67 @@ permalink: "/about/"
                                 );
                             }
 
-                            markers.forEach((m, i) => {
-                                const pos = latLngToVec3(m.lat, m.lng, SPHERE_RADIUS);
-                                const color = new THREE.Color(m.color);
+                            const mColor = new THREE.Color(LAND_COLOR);
+                            markers.forEach((m) => {
+                                const pos = latLngToVec3(m.lat, m.lng, GLOBE_RADIUS);
                                 const group = new THREE.Group();
                                 group.position.copy(pos);
 
-                                // Spoke line
                                 const spokeGeo = new THREE.BufferGeometry();
                                 spokeGeo.setAttribute('position', new THREE.BufferAttribute(
                                     new Float32Array([pos.x, pos.y, pos.z, 0, 0, 0]), 3
                                 ));
-                                const spoke = new THREE.LineSegments(spokeGeo,
-                                    new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.28 })
-                                );
-                                markerGroup.add(spoke);
+                                markerGroup.add(new THREE.LineSegments(spokeGeo,
+                                    new THREE.LineBasicMaterial({ color: mColor, transparent: true, opacity: 0.18 })
+                                ));
 
-                                // Outer glow
-                                const glowOuter = new THREE.Mesh(
-                                    new THREE.SphereGeometry(2.8 * MARKER_SIZE_BASE, 16, 16),
-                                    new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.055, depthWrite: false })
-                                );
-                                group.add(glowOuter);
-
-                                // Inner glow
-                                const glowInner = new THREE.Mesh(
-                                    new THREE.SphereGeometry(1.55 * MARKER_SIZE_BASE, 16, 16),
-                                    new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.14, depthWrite: false })
-                                );
-                                group.add(glowInner);
-
-                                // Core orb
+                                group.add(new THREE.Mesh(
+                                    new THREE.SphereGeometry(2.8 * MARKER_SIZE, 16, 16),
+                                    new THREE.MeshBasicMaterial({ color: mColor, transparent: true, opacity: 0.04, depthWrite: false })
+                                ));
+                                group.add(new THREE.Mesh(
+                                    new THREE.SphereGeometry(1.55 * MARKER_SIZE, 16, 16),
+                                    new THREE.MeshBasicMaterial({ color: mColor, transparent: true, opacity: 0.1, depthWrite: false })
+                                ));
                                 const core = new THREE.Mesh(
-                                    new THREE.SphereGeometry(MARKER_SIZE_BASE, 32, 32),
+                                    new THREE.SphereGeometry(MARKER_SIZE, 32, 32),
                                     new THREE.MeshStandardMaterial({
-                                        color, roughness: 0.3, metalness: 0.55,
-                                        emissive: color, emissiveIntensity: 0.12,
+                                        color: mColor, roughness: 0.3, metalness: 0.55,
+                                        emissive: mColor, emissiveIntensity: 0.12,
                                     })
                                 );
                                 group.add(core);
 
-                                // Hit target
                                 const hit = new THREE.Mesh(
-                                    new THREE.SphereGeometry(Math.max(4 * MARKER_SIZE_BASE, 0.18), 8, 8),
+                                    new THREE.SphereGeometry(4 * MARKER_SIZE, 8, 8),
                                     new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })
                                 );
                                 hit.visible = false;
                                 group.add(hit);
 
                                 markerGroup.add(group);
-                                markerMeshes.push({ group, core, glowInner, glowOuter, spoke, data: m });
+                                markerMeshes.push({ group, core, data: m });
                                 hitMeshes.push(hit);
                             });
 
-                            /* ── Raycaster ── */
-                            const raycaster = new THREE.Raycaster();
-                            const mouseNDC = new THREE.Vector2(-99, -99);
-                            let hoveredIdx = null;
+                            /* ── Interaction ── */
+                            const rotationQ = new THREE.Quaternion();
+                            const identityQ = new THREE.Quaternion();
+                            const yAxis = new THREE.Vector3(0, 1, 0);
+                            const xAxis = new THREE.Vector3(1, 0, 0);
+                            const tempQ = new THREE.Quaternion();
+                            const drag = { active: false, deltaQ: new THREE.Quaternion(), lastVec: new THREE.Vector3() };
+                            let elapsedTime = 0;
 
-                            renderer.domElement.addEventListener('mousemove', e => {
-                                const rect = renderer.domElement.getBoundingClientRect();
-                                mouseNDC.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-                                mouseNDC.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-                            });
-
-                            /* ── Pointer drag (quaternion trackball) ── */
-                            let pointerStart = null;
+                            function trackballVec(x, y) {
+                                const r = Math.sqrt(x * x + y * y);
+                                const z = r < 0.8 ? Math.sqrt(0.8 * 0.8 - r * r) : (0.8 * 0.8) / (2 * r);
+                                return new THREE.Vector3(x, y, z).normalize();
+                            }
 
                             renderer.domElement.addEventListener('pointerdown', e => {
                                 drag.active = true;
                                 drag.deltaQ.identity();
-                                pointerStart = { x: e.clientX, y: e.clientY };
                                 const rect = renderer.domElement.getBoundingClientRect();
                                 drag.lastVec.copy(trackballVec(
                                     ((e.clientX - rect.left) / rect.width) * 2 - 1,
@@ -434,7 +403,6 @@ permalink: "/about/"
                                 renderer.domElement.setPointerCapture(e.pointerId);
                                 renderer.domElement.style.cursor = 'grabbing';
                             });
-
                             renderer.domElement.addEventListener('pointermove', e => {
                                 if (!drag.active) return;
                                 const rect = renderer.domElement.getBoundingClientRect();
@@ -445,40 +413,23 @@ permalink: "/about/"
                                 drag.deltaQ.setFromUnitVectors(drag.lastVec, newVec);
                                 drag.lastVec.copy(newVec);
                             });
-
                             renderer.domElement.addEventListener('pointerup', () => {
                                 drag.active = false;
                                 renderer.domElement.style.cursor = 'grab';
-                                pointerStart = null;
                             });
-
                             renderer.domElement.addEventListener('pointerleave', () => {
                                 drag.active = false;
                                 renderer.domElement.style.cursor = 'grab';
                             });
 
-                            /* ── Mouse velocity (outside globe nudges rotation) ── */
-                            window.addEventListener('mousemove', e => {
+                            /* ── Raycaster ── */
+                            const raycaster = new THREE.Raycaster();
+                            const mouseNDC = new THREE.Vector2(-99, -99);
+                            let hoveredIdx = null;
+                            renderer.domElement.addEventListener('mousemove', e => {
                                 const rect = renderer.domElement.getBoundingClientRect();
-                                if (e.clientX >= rect.left && e.clientX <= rect.right &&
-                                    e.clientY >= rect.top && e.clientY <= rect.bottom) {
-                                    mouseVel.vx = 0; mouseVel.vy = 0; lastMouse = null;
-                                    if (mouseDecayTimer) clearTimeout(mouseDecayTimer);
-                                    return;
-                                }
-                                const cx = rect.left + rect.width / 2;
-                                const halfW = rect.width / 2;
-                                const sx = (e.clientX - cx) / halfW;
-                                const sy = -(e.clientY - (rect.top + rect.height / 2)) / halfW;
-                                if (lastMouse) {
-                                    const dx = Math.max(-0.02, Math.min(0.02, sx - lastMouse.x));
-                                    const dy = Math.max(-0.02, Math.min(0.02, sy - lastMouse.y));
-                                    mouseVel.vx = 0.3 * dx + 0.7 * mouseVel.vx;
-                                    mouseVel.vy = 0.3 * dy + 0.7 * mouseVel.vy;
-                                }
-                                lastMouse = { x: sx, y: sy };
-                                if (mouseDecayTimer) clearTimeout(mouseDecayTimer);
-                                mouseDecayTimer = setTimeout(() => { mouseVel.vx = 0; mouseVel.vy = 0; lastMouse = null; }, 2000);
+                                mouseNDC.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                                mouseNDC.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
                             });
 
                             /* ── Resize ── */
@@ -492,13 +443,13 @@ permalink: "/about/"
                             resize();
                             window.addEventListener('resize', resize);
 
-                            /* ── Counter ── */
                             counterEl.textContent = markers.length + ' countries visited';
 
-                            /* ── Theme handling ── */
+                            /* ── Theme ── */
                             function updateTheme() {
                                 const light = document.documentElement.getAttribute('data-theme') === 'light';
-                                occlusionMat.color.set(light ? 0xfafafa : 0x0a0a0f);
+                                const bg = light ? 0xfafafa : 0x050507;
+                                occlusionMat.color.set(bg);
                             }
                             new MutationObserver(updateTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
@@ -514,23 +465,13 @@ permalink: "/about/"
                                 dotMaterial.uniforms.uTime.value = elapsedTime;
                                 glowMat.uniforms.uTime.value = elapsedTime;
 
-                                /* Rotation */
                                 if (drag.active) {
                                     rotationQ.premultiply(drag.deltaQ);
                                 } else {
                                     drag.deltaQ.slerp(identityQ, 0.08);
                                     rotationQ.premultiply(drag.deltaQ);
-
-                                    if (Math.abs(mouseVel.vx) > 1e-4 || Math.abs(mouseVel.vy) > 1e-4) {
-                                        tempQ.setFromAxisAngle(yAxis, 1.8 * mouseVel.vx);
-                                        rotationQ.premultiply(tempQ);
-                                        tempQ.setFromAxisAngle(xAxis, -(1.8 * mouseVel.vy));
-                                        rotationQ.premultiply(tempQ);
-                                    }
-
                                     tempQ.setFromAxisAngle(yAxis, AUTO_ROTATE_SPEED * dt);
                                     rotationQ.premultiply(tempQ);
-
                                     euler.setFromQuaternion(rotationQ, 'YXZ');
                                     const pitchCorrect = (0.18 * Math.sin(0.12 * elapsedTime) - euler.x) * 0.02;
                                     tempQ.setFromAxisAngle(xAxis, pitchCorrect);
@@ -540,7 +481,6 @@ permalink: "/about/"
                                 globeGroup.quaternion.copy(rotationQ);
                                 markerGroup.quaternion.copy(rotationQ);
 
-                                /* Raycast markers */
                                 raycaster.setFromCamera(mouseNDC, camera);
                                 const visible = hitMeshes.map(h => { h.visible = true; return h; });
                                 const hits = raycaster.intersectObjects(visible);
@@ -561,7 +501,6 @@ permalink: "/about/"
                                         const screenPos = worldPos.clone().project(camera);
                                         const rect = renderer.domElement.getBoundingClientRect();
                                         tooltip.textContent = m.data.name;
-                                        tooltip.style.borderColor = m.data.color + '55';
                                         tooltip.style.left = ((screenPos.x + 1) / 2 * rect.width) + 'px';
                                         tooltip.style.top = ((-screenPos.y + 1) / 2 * rect.height) + 'px';
                                         tooltip.style.opacity = '1';
@@ -572,12 +511,10 @@ permalink: "/about/"
 
                                 renderer.domElement.style.cursor = hoveredIdx !== null ? 'pointer' : (drag.active ? 'grabbing' : 'grab');
 
-                                /* Marker hover scale */
                                 markerMeshes.forEach((m, i) => {
                                     const target = (i === hoveredIdx) ? 1.8 : 1;
                                     const s = m.core.scale.x + (target - m.core.scale.x) * 0.15;
                                     m.core.scale.setScalar(s);
-                                    m.glowInner.scale.setScalar(s);
                                 });
 
                                 renderer.render(scene, camera);
