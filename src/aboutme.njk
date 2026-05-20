@@ -480,7 +480,8 @@ permalink: "/about/"
 
                             /* ── Theme ── */
                             function updateTheme() {
-                                /* Globe always renders in dark style for both themes */
+                                const light = document.documentElement.getAttribute('data-theme') === 'light';
+                                occlusionMat.color.set(light ? 0x1a1a2e : 0x050507);
                             }
                             updateTheme();
                             new MutationObserver(updateTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
